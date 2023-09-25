@@ -25,3 +25,10 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.auth-page {
+  background-image: url("/car.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
