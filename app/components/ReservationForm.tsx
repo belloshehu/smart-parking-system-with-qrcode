@@ -1,18 +1,19 @@
 "use client";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import Link from "next/link";
 import { toast } from "react-hot-toast";
 import CustomInputField from "./CustomInputField";
 import { useRouter } from "next/navigation";
-import SubmitButton from "./SubmitButton";
 import axios from "axios";
-import { useState } from "react";
-import { styles } from "../styles";
+import { useState, useEffect } from "react";
 // import FormMessage from "./FormMessage";
 import { setUser } from "../GlobalRedux/features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { setReservation } from "../GlobalRedux/features/space/spaceSlice";
+import {
+  resetReservation,
+  setReservation,
+} from "../GlobalRedux/features/space/spaceSlice";
+import { formatedTodayDate } from "@/utils";
 
 type responseMsgType = {
   text: string;
@@ -20,6 +21,8 @@ type responseMsgType = {
 };
 
 const ReservationForm = () => {
+  const formatedTime = new Date().toLocaleTimeString();
+  //   console.log(formatedTime);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -28,11 +31,16 @@ const ReservationForm = () => {
     text: "",
     type: "error",
   });
+
+  useEffect(() => {
+    dispatch(resetReservation());
+  }, []);
+
   return (
     <div className={`w-full mx-auto  md:p-0 p-0  relative border-2 rounded-md`}>
       <Formik
         initialValues={{
-          date: "",
+          date: formatedTodayDate(),
           checkIn: "",
           hours: 1,
           minutes: 0,
@@ -84,14 +92,14 @@ const ReservationForm = () => {
             });
         }}
         validationSchema={Yup.object({
-          date: Yup.string(),
-          checkIn: Yup.string(),
-          hours: Yup.number(),
-          minutes: Yup.number(),
+          date: Yup.string().required("Date is required"),
+          checkIn: Yup.string().required("Check in time required"),
+          hours: Yup.number().required("Check in hour required"),
+          minutes: Yup.number().required("Check in minute required"),
         })}>
         {({ handleChange, getFieldHelpers, getFieldProps, values }) => (
           <Form
-            onChange={(e) => {
+            onChange={async (e) => {
               dispatch(
                 setReservation({
                   ...reservation,
@@ -130,6 +138,13 @@ const ReservationForm = () => {
                   label="Minutes"
                   placeholder="Minutes"
                   type="number"
+                  //   changeHandler={(e: any) => {
+                  //     setReservation({
+                  //       ...reservation,
+                  //       durationMinutes: e.target.value,
+                  //     });
+                  //     getFieldHelpers("minutes").setValue(e.target.value);
+                  //   }}
                 />
               </div>
 

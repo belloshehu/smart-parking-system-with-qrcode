@@ -13,4 +13,12 @@ export const store = configureStore({
     auth: authReducer,
     space: spaceReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["TYPE"],
+        ignoredActionPaths: ["property"],
+        ignoredPaths: ["reducer.property"],
+      },
+    }),
 });

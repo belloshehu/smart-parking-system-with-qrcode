@@ -13,6 +13,7 @@ const CustomInputField = ({ ...props }) => {
         type={props.type || "text"}
         className={`${styles.input} w-full`}
         placeholder={props.placeholder}
+        // onChange={props.changeHandler}
       />
       <ErrorMessage
         name={props.name}

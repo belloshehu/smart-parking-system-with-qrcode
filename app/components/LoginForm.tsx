@@ -9,7 +9,7 @@ import SubmitButton from "./SubmitButton";
 import axios from "axios";
 import { useState } from "react";
 import { styles } from "../styles";
-// import FormMessage from "./FormMessage";
+import FormMessage from "./FormMessage";
 import { setUser } from "../GlobalRedux/features/auth/authSlice";
 import { useDispatch } from "react-redux";
 
@@ -57,6 +57,7 @@ const LoginForm = () => {
                     "user",
                     JSON.stringify(callback.data.user)
                   );
+                  console.log(callback.data.user);
                 }
                 dispatch(setUser(callback.data.user));
                 router.push("/");
@@ -93,7 +94,7 @@ const LoginForm = () => {
         })}>
         <Form>
           <div className="flex flex-col items-center justify-center gap-2 md:gap-5 w-full">
-            {/* <FormMessage message={responseMsg} /> */}
+            <FormMessage message={responseMsg} />
             <CustomInputField
               name="email"
               label="Email"

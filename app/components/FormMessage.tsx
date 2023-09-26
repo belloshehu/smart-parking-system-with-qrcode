@@ -14,12 +14,12 @@ const FormMessage = ({ message }: { message: messageProps }) => {
         message.text
           ? "translate-x-0 scale-[100%]"
           : "-translate-x-[100%] scale-[30%]"
-      } transition-all duration-300  w-full absolute -top-4 left-0`}>
+      } transition-all duration-300  w-full mx-auto my-5 absolute -top-5 left-0`}>
       {message.text && (
         <div
           className={`flex gap-2 items-center ${
             message.type === "success" ? "text-green-700" : "text-red-700"
-          } bg-slate-50 w-full justify-center px-2`}>
+          } bg-slate-100 w-full justify-center px-2`}>
           {message.type === "success" ? (
             <FaThumbsUp className="text-lg" />
           ) : (

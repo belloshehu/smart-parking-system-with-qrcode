@@ -1,33 +1,53 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useRef, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearDialogRef,
+  setDialogRef,
+} from "../GlobalRedux/features/modal/modalSlice";
 
 type Props = {
   children: React.ReactNode;
   title: string;
   okButtonText: string;
   okClickHandler: () => void;
+  dialogFormChangeHandler: (e: any) => void;
 };
 
-const Dialog = ({ children, title, okButtonText, okClickHandler }: Props) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const { dialogOpen } = useSelector((store: any) => store.modal);
+const Dialog = ({
+  children,
+  title,
+  okButtonText,
+  okClickHandler,
+  dialogFormChangeHandler,
+}: Props) => {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const { user } = useSelector((store: any) => store.auth);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const close = () => {
     dialogRef?.current?.close();
   };
 
   useEffect(() => {
-    if (dialogOpen == true) {
-      dialogRef?.current?.showModal();
-    } else {
-      dialogRef?.current?.close();
+    if (!user) {
+      router.push("/auth/login");
     }
-  }, [dialogOpen]);
+  }, []);
+
+  useEffect(() => {
+    dispatch(setDialogRef(dialogRef));
+    return () => {
+      dispatch(clearDialogRef());
+    };
+  }, []);
 
   return (
     <dialog
+      onChange={dialogFormChangeHandler}
       ref={dialogRef}
       className="w-full md:w-3/5 backdrop:backdrop-blur-sm bg-slate-200 p-5 md:p-8 rounded-md">
       <button

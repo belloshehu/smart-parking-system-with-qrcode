@@ -2,22 +2,30 @@ import React from "react";
 import { SelectedSpace } from "./SelectedSpace";
 import { useSelector } from "react-redux";
 import { calculateCost } from "@/utils";
+import { FaCalendar, FaClock } from "react-icons/fa";
 
 const Reservation = () => {
   const { selectedSpace, reservation } = useSelector(
     (store: any) => store.space
   );
   return (
-    <div className="bg-primary w-full p-5 flex justify-between items-center text-white">
-      <h2 className="text-3xl">
-        $
-        {calculateCost(
-          parseFloat(selectedSpace?.price?.split("/").at(0)),
-          reservation?.durationHour,
-          reservation?.durationMinutes
-        ).toFixed(2)}
-      </h2>
-      <SelectedSpace {...selectedSpace} />
+    <div className="bg-primary w-full p-5 flex flex-col justify-between items-center text-white">
+      <div className="w-full p-5 flex flex-col-reverse gap-5 justify-between items-center">
+        <h2 className="text-3xl">N{reservation?.cost}</h2>
+        <SelectedSpace {...selectedSpace} />
+      </div>
+      <div className="w-full p-5 flex flex-col justify-between items-center">
+        <div className="flex justify-center items-center gap-2">
+          <FaCalendar />
+          <p>Date: </p>
+          <p>{reservation.checkInDate}</p>
+        </div>
+        <div className="flex justify-center items-center gap-2">
+          <FaClock />
+          <p>Checkin Time</p>
+          <p>{reservation.checkInTime}</p>
+        </div>
+      </div>
     </div>
   );
 };

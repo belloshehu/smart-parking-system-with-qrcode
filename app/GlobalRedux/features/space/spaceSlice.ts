@@ -47,9 +47,24 @@ const spaceSlice = createSlice({
     ) => {
       state.reservation = payload;
     },
+    resetReservation: (state: stateTypes) => {
+      state.reservation = {
+        durationHour: 1,
+        durationMinutes: 0,
+        checkInTime: "",
+        checkInDate: "",
+        cost: 0,
+        price: 0,
+        space: state.selectedSpace,
+      };
+    },
   },
 });
 
-export const { setSelectedSpace, clearSelectedState, setReservation } =
-  spaceSlice.actions;
+export const {
+  setSelectedSpace,
+  clearSelectedState,
+  setReservation,
+  resetReservation,
+} = spaceSlice.actions;
 export default spaceSlice.reducer;

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Space reservation payment.",
 };
 
-export default function PaaymentLayout({
+export default function PaymentLayout({
   children,
 }: {
   children: React.ReactNode;

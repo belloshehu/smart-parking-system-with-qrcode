@@ -3,7 +3,16 @@ export const calculateCost = (
   hours: number,
   minutes: number
 ) => {
-  console.log(price, hours, minutes);
-  const duration = hours * 60 + minutes / 60;
+  const duration = hours * 60 + minutes;
   return duration * price;
+};
+
+export const formatedTodayDate = () => {
+  const date = new Date().toLocaleDateString();
+  const [day, month, year] = date.split("/");
+
+  let formatedDate = "";
+
+  formatedDate = year + "-" + month + "-" + day;
+  return formatedDate;
 };

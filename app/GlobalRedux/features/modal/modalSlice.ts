@@ -9,6 +9,7 @@ interface modalState {
   mosqueFormVisible: boolean;
   confirmDelete: boolean;
   dialogOpen: boolean;
+  dialogRef: React.RefObject<HTMLDialogElement> | null;
 }
 const modalSlice = createSlice({
   name: "modal",
@@ -20,6 +21,7 @@ const modalSlice = createSlice({
     mosqueFormVisible: false,
     confirmDelete: false,
     dialogOpen: false,
+    dialogRef: null,
   },
   reducers: {
     openModal: (state: modalState) => {
@@ -35,13 +37,17 @@ const modalSlice = createSlice({
         state.dropDownOpen = true;
       }
     },
-    openDialog: (state: modalState) => {
-      console.log("open dia");
-      state.dialogOpen = true;
+    setDialogRef: (
+      state: modalState,
+      { payload }: { payload: React.RefObject<HTMLDialogElement> }
+    ) => {
+      console.log(payload);
+      state.dialogRef = payload;
     },
-    closeDialog: (state: modalState) => {
-      state.dialogOpen = false;
+    clearDialogRef: (state: modalState) => {
+      state.dialogRef = null;
     },
+
     toggleModal: (state: modalState) => {
       if (state.isOpened) {
         state.isOpened = false;
@@ -88,7 +94,7 @@ export const {
   showConfirmDelete,
   hideConfirmDelete,
   toggleModal,
-  openDialog,
-  closeDialog,
+  setDialogRef,
+  clearDialogRef,
 } = modalSlice.actions;
 export default modalSlice.reducer;

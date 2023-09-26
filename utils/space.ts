@@ -1,13 +1,13 @@
 export const spaces = [
-  { id: 0, price: "1.4/hour", status: "free", type: "VIP" },
-  { id: 1, price: "1.4/hour", status: "occupied", type: "Normal" },
-  { id: 1, price: "1.4/hour", status: "free", type: "Normal" },
+  { id: 0, price: "30/min", status: "free", type: "VIP" },
+  { id: 1, price: "10/min", status: "occupied", type: "Normal" },
+  { id: 2, price: "10/min", status: "free", type: "Normal" },
 ];
 
 export const reservedSpaces = [
   {
     id: 0,
-    price: "3/hour",
+    price: "30/min",
     status: "free",
     type: "VIP",
     date: "23/09/2023",
@@ -17,7 +17,7 @@ export const reservedSpaces = [
   },
   {
     id: 1,
-    price: "1.4/hour",
+    price: "10/min",
     status: "occupied",
     type: "Normal",
     date: "23/09/2023",
@@ -26,8 +26,8 @@ export const reservedSpaces = [
     cost: 4.5,
   },
   {
-    id: 1,
-    price: "1.4/hour",
+    id: 2,
+    price: "10/min",
     status: "free",
     type: "Normal",
     date: "23/09/2023",
