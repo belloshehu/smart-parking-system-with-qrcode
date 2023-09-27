@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
   await connectDB();
   //request body
   const { email, password } = await request.json();
+  console.log(email, password);
   if (!email)
     return NextResponse.json(
       { message: "email is required", success: false },
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
   const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY!, {
     expiresIn: "30d",
   });
+
   const response = NextResponse.json({
     message: "logged in successfully",
     user: {

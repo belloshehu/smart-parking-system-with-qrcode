@@ -5,7 +5,7 @@ type props = {
   children: React.ReactNode;
 };
 const DashboardLayout = ({ children }: props) => {
-  return <div>{children}</div>;
+  return <div className="p-">{children}</div>;
 };
 
 export default DashboardLayout;

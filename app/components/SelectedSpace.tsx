@@ -15,7 +15,10 @@ export const SelectedSpace = ({ id, price, type }: Props) => {
       </div>
       <div className="flex gap-1 flex-col ">
         <h1 className="text-xl">{id}</h1>
-        <h3>${price}</h3>
+        <h3>
+          <span className="line-through">N</span>
+          {price}
+        </h3>
         <div className="p-1 px-2 rounded-full bg-slate-300 text-primary">
           <h3 className="text-sm text-center">{type}</h3>
         </div>

@@ -14,6 +14,7 @@ import {
   setReservation,
 } from "../GlobalRedux/features/space/spaceSlice";
 import { formatedTodayDate } from "@/utils";
+import dayjs from "dayjs";
 
 type responseMsgType = {
   text: string;
@@ -35,6 +36,9 @@ const ReservationForm = () => {
   useEffect(() => {
     dispatch(resetReservation());
   }, []);
+
+  const tomorrow = dayjs().add(1, "day");
+  const yesterday = dayjs().subtract(1, "day");
 
   return (
     <div className={`w-full mx-auto  md:p-0 p-0  relative border-2 rounded-md`}>
@@ -92,7 +96,10 @@ const ReservationForm = () => {
             });
         }}
         validationSchema={Yup.object({
-          date: Yup.string().required("Date is required"),
+          date: Yup.date()
+            .required("Date is required")
+            .min(yesterday, "Date must be today")
+            .max(tomorrow, "Date cannot exceed tomorrow"),
           checkIn: Yup.string().required("Check in time required"),
           hours: Yup.number().required("Check in hour required"),
           minutes: Yup.number().required("Check in minute required"),

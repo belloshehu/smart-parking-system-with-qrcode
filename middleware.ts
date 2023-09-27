@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import connectDB from "./app/api/database/dbconnect";
+import User from "./app/api/models/user";
+import jwt from "jsonwebtoken";
+import { authenticateUser } from "./utils/authentication";
 
 const allowedOrigin =
   process.env.NODE_ENV === "development"
@@ -10,9 +14,15 @@ const allowedOrigin =
       ]
     : ["http://smart-parking-system.vercel.app"];
 
-export function middleware(request: Request) {
+export async function middleware(request: Request) {
   const origin = request.headers.get("origin");
-  console.log(origin);
+
+  if (request.url.includes("/space")) {
+    const data = await authenticateUser(request);
+    console.log(data);
+    console.log(request.url);
+  }
+
   if (origin && !allowedOrigin.includes(origin)) {
     return new NextResponse(null, {
       status: 400,
@@ -23,8 +33,6 @@ export function middleware(request: Request) {
     });
   }
 
-  console.log(request.url);
-  console.log(request.method);
   return NextResponse.next();
 }
 

@@ -13,20 +13,23 @@ import ReservationForm from "./ReservationForm";
 import { SelectedSpace } from "./SelectedSpace";
 import FormMessage from "./FormMessage";
 import { useRouter } from "next/navigation";
-import { stat } from "fs";
 
-type props = {
-  status: string;
-  price: string;
-  id: number | string;
+type Props = {
+  _id: string;
+  id: string;
+  price: number;
   type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 };
 type Message = {
   text: string;
   type: "error" | "success";
 };
-export const Space = ({ status, price, id, type }: props) => {
-  //   const { dialogRef } = useSelector((store: any) => store.modal);
+export const Space = ({ space }: { space: Props }) => {
+  const { id, price, type, status } = space;
   const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const [hours, setHours] = useState<number>(1);
@@ -38,7 +41,7 @@ export const Space = ({ status, price, id, type }: props) => {
   );
 
   const handleClick = () => {
-    dispatch(setSelectedSpace({ price, id, type }));
+    dispatch(setSelectedSpace({ ...space }));
     console.log(dialogRef);
     if (dialogRef) {
       dialogRef?.current?.showModal();
@@ -65,7 +68,7 @@ export const Space = ({ status, price, id, type }: props) => {
       setReservation({
         ...reservation,
         cost: calculateCost(
-          parseFloat(selectedSpace?.price?.split("/").at(0)),
+          parseFloat(selectedSpace?.price),
           hours,
           minutes
         ).toFixed(2),
@@ -89,12 +92,12 @@ export const Space = ({ status, price, id, type }: props) => {
       <div
         className={`rounded-md flex flex-col text-slate-700 relative gap-2 shadow-lg shadow-slate-600 hover:scale-105 duration-150 transition-all border-2 ${
           status === "free" ? "bg-slate-200" : "bg-red-200"
-        } p-5`}>
+        } p-5 pt-10`}>
         <CategoryType type={type} />
-        <div className="flex justify-evenly items-centers">
+        <div className="flex justify-between items-centers">
           <div>
             <h3 className=" text-xl">{id}</h3>
-            <h2 className=" text-2xl">N{price}</h2>
+            <h2 className=" text-2xl">N{price}/minute</h2>
           </div>
           <FaCar className="text-5xl  line-through" />
         </div>
@@ -131,9 +134,9 @@ export const Space = ({ status, price, id, type }: props) => {
             <div className="flex flex-row-reverse md:flex-col-reverse text-white justify-center h-full gap-5 items-center w-full rounded-md p-5 bg-primary">
               <div>
                 <h1 className="text-3xl font-bold">
-                  Total: N{" "}
+                  Total: <span className="line-through">N</span>
                   {calculateCost(
-                    parseFloat(selectedSpace?.price?.split("/").at(0)),
+                    parseFloat(selectedSpace?.price),
                     hours,
                     minutes
                   ).toFixed(2)}

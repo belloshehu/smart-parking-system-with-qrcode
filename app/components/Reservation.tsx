@@ -11,7 +11,10 @@ const Reservation = () => {
   return (
     <div className="bg-primary w-full p-5 flex flex-col justify-between items-center text-white">
       <div className="w-full p-5 flex flex-col-reverse gap-5 justify-between items-center">
-        <h2 className="text-3xl">N{reservation?.cost}</h2>
+        <h2 className="text-3xl">
+          <span className="line-through">N</span>
+          {reservation?.cost}
+        </h2>
         <SelectedSpace {...selectedSpace} />
       </div>
       <div className="w-full p-5 flex flex-col justify-between items-center">

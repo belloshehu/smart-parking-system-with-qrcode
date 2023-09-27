@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { CategoryType } from "./CategoryType";
+import QRCode from "./QRCode";
 
 type props = {
   id: string | number;
@@ -60,7 +61,7 @@ const ReservedSpace = ({
         </Link>
       </div>
       <div className="w-full">
-        <FaQrcode className="h-full w-full" />
+        <QRCode id={""} checkInDate={new Date()} checkInTime={new Date()} />
       </div>
     </div>
   );
