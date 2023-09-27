@@ -28,7 +28,7 @@ export default function Home() {
         <h1 className="text-2xl  md:text-3xl text-slate-600 text-left font-bold">
           Spaces
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8 my-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-20 w-full gap-8 my-5">
           {spaces.map((space) => (
             <Space key={space.id} {...space} />
           ))}

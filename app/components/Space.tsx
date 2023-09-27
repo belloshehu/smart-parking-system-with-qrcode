@@ -13,6 +13,7 @@ import ReservationForm from "./ReservationForm";
 import { SelectedSpace } from "./SelectedSpace";
 import FormMessage from "./FormMessage";
 import { useRouter } from "next/navigation";
+import { stat } from "fs";
 
 type props = {
   status: string;
@@ -98,7 +99,10 @@ export const Space = ({ status, price, id, type }: props) => {
           <FaCar className="text-5xl  line-through" />
         </div>
         <button
-          className="bg-primary text-white rounded-full text-center p-2 my-3"
+          disabled={status === "occupied"}
+          className={`${
+            status === "occupied" ? "bg-slate-400" : "bg-primary"
+          } text-white rounded-full text-center p-2 px-5 my-3 shadow-md shadow-slate-600 w-full md:w-fit`}
           type="button"
           onClick={handleClick}>
           {status === "free" ? "Reserve now" : "Occupied"}

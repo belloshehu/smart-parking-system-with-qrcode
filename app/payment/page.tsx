@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import PaystackPop from "@paystack/inline-js";
 import { FaMoneyBill } from "react-icons/fa";
+import Link from "next/link";
 
 const Payment = () => {
   const router = useRouter();
@@ -51,9 +52,14 @@ const Payment = () => {
       <div className="shadow-lg shadow-black w-full md:w-2/5 flex flex-col justify-center gap-0 items-center p-0 rounded-lg relative bg-primary">
         <FaMoneyBill className="absolute top-0 right-0 rotate-45 text-7xl text-red-500" />
         <Reservation />
-        <div className="p-5 w-full bg-primary">
+        <div className="flex justify-between gap-5 md:gap-10 items-center p-5 w-full bg-primary">
+          <Link
+            href={"/"}
+            className="bg-red-600 p-2 px-3 rounded-md text-center text-white flex-2">
+            Cancel
+          </Link>
           <button
-            className="bg-white p-2 px-4 w-full rounded-md text-primary shadow-md shadow-slate-400"
+            className="bg-white p-2 px-4 flex-1 rounded-md text-primary shadow-md shadow-slate-400"
             onClick={makePayment}>
             Make payment now
           </button>
