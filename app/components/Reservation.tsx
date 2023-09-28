@@ -1,7 +1,6 @@
 import React from "react";
 import { SelectedSpace } from "./SelectedSpace";
 import { useSelector } from "react-redux";
-import { calculateCost } from "@/utils";
 import { FaCalendar, FaClock } from "react-icons/fa";
 
 const Reservation = () => {

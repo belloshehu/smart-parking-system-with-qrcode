@@ -3,8 +3,14 @@ import mongoose from "mongoose";
 const ReservationSchema = new mongoose.Schema(
   {
     user: {
-      type: mongoose.Types.ObjectId,
-      required: [true, "Reservation User ID required"],
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, "Reservation User Id required"],
+      ref: "User",
+    },
+    space: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, "Space Id is required"],
+      ref: "Space",
     },
     amount: {
       type: Number,
