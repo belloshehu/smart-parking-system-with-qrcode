@@ -1,10 +1,17 @@
+import { number } from "yup";
+
+export const calculateDuration = (hours: number, minutes: number) => {
+  if (typeof minutes === "string") {
+    return hours * 60 + parseInt(minutes);
+  }
+  return hours * 60 + minutes;
+};
 export const calculateCost = (
   price: number,
   hours: number,
   minutes: number
 ) => {
-  const duration = hours * 60 + minutes;
-  return duration * price;
+  return calculateDuration(hours, minutes) * price;
 };
 
 export const formatedTodayDate = () => {

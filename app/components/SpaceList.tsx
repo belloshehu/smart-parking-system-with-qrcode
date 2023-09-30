@@ -25,7 +25,6 @@ const SpaceList = async () => {
         const { data } = await axios.get("/api/space");
         const spaceData = await data.spaces;
         setSpaces(spaceData);
-        console.log(spaceData);
       } catch (error) {
         console.log(error);
       } finally {

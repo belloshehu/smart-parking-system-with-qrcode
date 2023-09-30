@@ -7,8 +7,7 @@ import {
   setSelectedSpace,
   setReservation,
 } from "../GlobalRedux/features/space/spaceSlice";
-import { calculateCost } from "@/utils";
-import Dialog from "./Dialog";
+import { calculateCost, calculateDuration } from "@/utils";
 import ReservationForm from "./ReservationForm";
 import { SelectedSpace } from "./SelectedSpace";
 import FormMessage from "./FormMessage";
@@ -49,18 +48,26 @@ export const Space = ({ space }: { space: Props }) => {
   };
 
   const handleProceed = async () => {
+    if (reservation?.vehicleNumber === "") {
+      // toast.error("Please select checkin time");
+      setMessage({
+        type: "error",
+        text: "Please enter vehicle number",
+      });
+      return;
+    }
     if (reservation?.checkInDate === "") {
       // toast.error("Please select checkin time");
       setMessage({
         type: "error",
-        text: "Please select checkin date",
+        text: "Please enter checkin date",
       });
       return;
     }
     if (reservation?.checkInTime === "") {
       setMessage({
         type: "error",
-        text: "Please select checkin time",
+        text: "Please enter checkin time",
       });
       return;
     }
@@ -72,6 +79,7 @@ export const Space = ({ space }: { space: Props }) => {
           hours,
           minutes
         ).toFixed(2),
+        duration: calculateDuration(hours, minutes),
       })
     );
     router.push("payment");
@@ -93,7 +101,7 @@ export const Space = ({ space }: { space: Props }) => {
         className={`rounded-md flex flex-col text-slate-700 relative gap-2 shadow-lg shadow-slate-600 hover:scale-105 duration-150 transition-all border-2 ${
           status === "free" ? "bg-slate-200" : "bg-red-200"
         } p-5 pt-10`}>
-        <CategoryType type={type} />
+        <CategoryType type={type} price={price} />
         <div className="flex justify-between items-centers">
           <div>
             <h3 className=" text-xl">{id}</h3>
@@ -135,11 +143,7 @@ export const Space = ({ space }: { space: Props }) => {
               <div>
                 <h1 className="text-3xl font-bold">
                   Total: <span className="line-through">N</span>
-                  {calculateCost(
-                    parseFloat(selectedSpace?.price),
-                    hours,
-                    minutes
-                  ).toFixed(2)}
+                  {calculateCost(price, hours, minutes).toFixed(2)}
                 </h1>
               </div>
               <SelectedSpace {...selectedSpace} />

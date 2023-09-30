@@ -7,6 +7,7 @@ const SpaceSchema = new mongoose.Schema(
       type: String,
       length: [4, "Space ID cannot be more than 4 characters"],
       required: [true, "Space ID required"],
+      unique: true,
     },
 
     price: {
@@ -29,7 +30,7 @@ const SpaceSchema = new mongoose.Schema(
         message: "{VALUE} is not a valid space status",
         default: "free",
       },
-      require: [true, "Space status required"],
+      required: [true, "Space status required"],
     },
   },
   { timestamps: true }

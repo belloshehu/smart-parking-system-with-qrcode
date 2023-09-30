@@ -2,11 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { StatusCodes } from "http-status-codes";
 import Space from "../models/space";
 import connectDB from "../database/dbconnect";
-import { isAuthorized } from "@/utils/authorization";
+import { checkAuthorization } from "@/utils/authorization";
+import jwt from "jsonwebtoken";
+import User from "../models/user";
 
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
+    const token: any = request.cookies.get("token")?.value;
+    if (!token) {
+      NextResponse.redirect("/login");
+    }
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const userId = decoded?.id;
+    const user = await User.findById(userId);
+    if (user.role !== "admin") {
+      return NextResponse.json(
+        { message: "Permission required" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
     const { id, status, price, type } = await request.json();
     if (!id) {
       return NextResponse.json(
@@ -34,10 +49,9 @@ export async function POST(request: NextRequest) {
     }
 
     const space = await Space.create({ id, status, price, type });
-    console.log(space);
 
     return NextResponse.json(
-      { message: "Space created successfully", success: true },
+      { message: "Space created successfully", success: true, space },
       { status: StatusCodes.CREATED }
     );
   } catch (error: any) {
@@ -75,6 +89,19 @@ export async function PATCH(request: NextRequest) {
   try {
     connectDB();
     const { _id, id, status, type, price } = await request.json();
+    const token: any = request.cookies.get("token")?.value;
+    if (!token) {
+      NextResponse.redirect("/login");
+    }
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    const userId = decoded?.id;
+    const user = await User.findById(userId);
+    if (user.role !== "admin") {
+      return NextResponse.json(
+        { message: "Permission required" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
     if (!_id) {
       return NextResponse.json(
         { message: "Space _id is required" },

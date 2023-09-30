@@ -22,8 +22,6 @@ type responseMsgType = {
 };
 
 const ReservationForm = () => {
-  const formatedTime = new Date().toLocaleTimeString();
-  //   console.log(formatedTime);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -48,6 +46,7 @@ const ReservationForm = () => {
           checkIn: "",
           hours: 1,
           minutes: 0,
+          vehicleNumber: "",
         }}
         onSubmit={async (values, { setSubmitting }) => {
           setIsLoading(true);
@@ -103,6 +102,7 @@ const ReservationForm = () => {
           checkIn: Yup.string().required("Check in time required"),
           hours: Yup.number().required("Check in hour required"),
           minutes: Yup.number().required("Check in minute required"),
+          vehicleNumber: Yup.string().required("Vehicle number required"),
         })}>
         {({ handleChange, getFieldHelpers, getFieldProps, values }) => (
           <Form
@@ -114,11 +114,19 @@ const ReservationForm = () => {
                   checkInTime: values.checkIn,
                   durationHour: values.hours,
                   durationMinutes: values.minutes,
+                  vehicleNumber: values.vehicleNumber,
                 })
               );
             }}>
             <div className="flex flex-col items-center justify-center gap-2 md:gap-5 w-full">
               {/* <FormMessage message={responseMsg} /> */}
+              <CustomInputField
+                name="vehicleNumber"
+                label="Vehicle Number"
+                placeholder="Vehicle Number"
+                type="text"
+              />
+
               <CustomInputField
                 name="date"
                 label="Date"
@@ -145,24 +153,8 @@ const ReservationForm = () => {
                   label="Minutes"
                   placeholder="Minutes"
                   type="number"
-                  //   changeHandler={(e: any) => {
-                  //     setReservation({
-                  //       ...reservation,
-                  //       durationMinutes: e.target.value,
-                  //     });
-                  //     getFieldHelpers("minutes").setValue(e.target.value);
-                  //   }}
                 />
               </div>
-
-              {/* <div className="flex w-full justify-between gap-5 items-center">
-              <button
-                type="button"
-                className="rounded-full p-2 px-4 bg-slate-400 text-primary text-center">
-                Cancel
-              </button>
-              <SubmitButton isLoading={isLoading} />
-            </div> */}
             </div>
           </Form>
         )}

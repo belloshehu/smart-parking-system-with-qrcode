@@ -1,7 +1,4 @@
-import { NextResponse } from "next/server";
-import connectDB from "./app/api/database/dbconnect";
-import User from "./app/api/models/user";
-import jwt from "jsonwebtoken";
+import { NextRequest, NextResponse } from "next/server";
 import { authenticateUser } from "./utils/authentication";
 
 const allowedOrigin =
@@ -14,13 +11,13 @@ const allowedOrigin =
       ]
     : ["http://smart-parking-system.vercel.app"];
 
-export async function middleware(request: Request) {
+export async function middleware(request: NextRequest) {
   const origin = request.headers.get("origin");
 
-  if (request.url.includes("/space")) {
-    const data = await authenticateUser(request);
-    console.log(data);
-    console.log(request.url);
+  if (request.nextUrl.pathname.endsWith("/space")) {
+    const decoded = authenticateUser(request);
+    console.log(decoded);
+    console.log("authenticating users");
   }
 
   if (origin && !allowedOrigin.includes(origin)) {

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import PaystackPop from "@paystack/inline-js";
 import { FaMoneyBill } from "react-icons/fa";
 import Link from "next/link";
+import axios from "axios";
 
 const Payment = () => {
   const router = useRouter();
@@ -15,12 +16,14 @@ const Payment = () => {
   const { user } = useSelector((store: any) => store.auth);
 
   useEffect(() => {
+    console.log(reservation);
     if (!user) {
       router.push("/auth/login");
     }
   }, []);
 
   useEffect(() => {
+    console.log(reservation);
     if (!selectedSpace) {
       router.push("/");
     }
@@ -30,17 +33,34 @@ const Payment = () => {
     const paystack = new PaystackPop();
     const amount: any = reservation?.cost;
     const paystackAmount: number = amount * 100;
+    console.log(reservation);
     paystack.newTransaction({
       key: "pk_test_f2f78ad36864d99374867e56ae7887e5eb249408",
       email: user?.email,
       firstName: user?.firstName,
       lastName: user?.lastName,
       amount: paystackAmount,
-      onSuccess(transition: any) {
+      async onSuccess(transition: any) {
+        try {
+          const { data } = await axios.post("/api/reservation", {
+            amount: parseInt(reservation.cost),
+            vehicleNumber: reservation.vehicleNumber,
+            spaceId: selectedSpace._id,
+            userId: user.id,
+            checkInDate: reservation.checkInDate,
+            checkInTime: reservation.checkInTime,
+            duration: reservation.duration,
+            paymentReference: transition.reference,
+          });
+          console.log(data);
+          router.push("/dashboard");
+        } catch (error: any) {
+          console.log(error?.data);
+        }
         console.log(transition);
       },
       onCancel() {
-        console.log("cancel trnasaction");
+        router.push("/");
       },
     });
   };

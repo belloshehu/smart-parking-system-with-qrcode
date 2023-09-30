@@ -3,12 +3,41 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "../database/dbconnect";
 import Reservation from "../models/reservation";
 import Space from "../models/space";
+import jwt from "jsonwebtoken";
+import User from "../models/user";
 
 export async function POST(request: NextRequest) {
   try {
     connectDB();
-    const { duration, checkInDate, checkInTime, amount, spaceId, userId } =
-      await request.json();
+    const token: any = request.cookies.get("token")?.value;
+    if (!token) {
+      NextResponse.redirect("/login");
+    }
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    if (!decoded) {
+      return NextResponse.json(
+        { message: "Please login" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
+    const id = decoded?.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return NextResponse.json(
+        { message: "Please login" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
+    const {
+      duration,
+      checkInDate,
+      checkInTime,
+      amount,
+      spaceId,
+      userId,
+      vehicleNumber,
+      paymentReference,
+    } = await request.json();
 
     if (!duration) {
       return NextResponse.json(
@@ -46,7 +75,18 @@ export async function POST(request: NextRequest) {
         { status: StatusCodes.BAD_REQUEST }
       );
     }
-
+    if (!vehicleNumber) {
+      return NextResponse.json(
+        { message: "Vechile number required" },
+        { status: StatusCodes.BAD_REQUEST }
+      );
+    }
+    if (!paymentReference) {
+      return NextResponse.json(
+        { message: "Payment Reference required" },
+        { status: StatusCodes.BAD_REQUEST }
+      );
+    }
     // check if space is not reserved that day
     const existingReservation = await Space.findById(spaceId);
     if (existingReservation.status !== "free") {
@@ -66,6 +106,9 @@ export async function POST(request: NextRequest) {
       amount,
       user: userId,
       space: spaceId,
+      status: "valid",
+      vehicleNumber,
+      paymentReference,
     });
 
     existingReservation.status = "occupied";
@@ -87,18 +130,43 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  // get reservations by a user
   try {
-    connectDB();
-    const query = await Reservation.find();
-
-    const reservations = await Reservation.populate(query, "space");
-    return NextResponse.json(
-      {
-        reservations,
-        length: reservations.length,
-      },
-      { status: StatusCodes.OK }
-    );
+    const token: any = request.cookies.get("token")?.value;
+    if (!token) {
+      NextResponse.redirect("/login");
+    }
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+    if (!decoded) {
+      return NextResponse.json(
+        { message: "Please login" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
+    const userId = decoded?.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json(
+        { message: "Please login" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
+    if (user.role === "admin" || userId === user._id.toHexString()) {
+      const query = await Reservation.find({ user: userId });
+      const reservations = await Reservation.populate(query, "space");
+      return NextResponse.json(
+        {
+          reservations,
+          length: reservations.length,
+        },
+        { status: StatusCodes.OK }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Unauthorized access" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
+    }
   } catch (error: any) {
     return NextResponse.json(
       { message: error.message },
@@ -106,3 +174,5 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {}

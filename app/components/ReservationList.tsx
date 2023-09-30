@@ -18,6 +18,8 @@ type Reservation = {
   duration: number;
   checkInDate: string;
   checkInTime: string;
+  vehicleNumber: string;
+  status: "valid" | "cancelled" | "expired";
 };
 
 const ReservationList = async ({
@@ -25,10 +27,36 @@ const ReservationList = async ({
 }: {
   reservations: Reservation[];
 }) => {
+  const [reservationItems, setReservationItems] =
+    useState<Reservation[]>(reservations);
+  const [loading, setLoading] = useState(false);
+
+  const handleCancelReservation = async (id: string) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.patch(`/api/reservation/${id}`);
+      setReservationItems((prev: any) =>
+        prev.map((item: any) => {
+          if (item._id === id) {
+            return { ...item, status: data.reservation.status };
+          }
+          return item;
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="grid grid-cols-1 px-0 md:px-20 w-full gap-8 my-5">
-      {reservations.map((reservation: Reservation) => (
-        <ReservedSpace key={reservation._id} {...reservation} />
+      {reservationItems.map((reservation: Reservation) => (
+        <ReservedSpace
+          key={reservation._id}
+          {...reservation}
+          cancelReservation={handleCancelReservation}
+        />
       ))}
     </div>
   );

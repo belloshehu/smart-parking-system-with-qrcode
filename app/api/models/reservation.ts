@@ -28,6 +28,23 @@ const ReservationSchema = new mongoose.Schema(
       type: Number, // duration in minutes
       required: [true, "Reservation duration required"],
     },
+    vehicleNumber: {
+      type: String,
+      required: [true, "Vehicle number required"],
+    },
+    status: {
+      type: String,
+      required: [true, "Status required"],
+      default: "valid",
+      enum: {
+        values: ["cancelled", "expired", "valid"],
+        message: "{VALUE} is not a valid reservation status",
+      },
+    },
+    paymentReference: {
+      type: String,
+      required: [true, "Payment Reference required"],
+    },
   },
   { timestamps: true }
 );
