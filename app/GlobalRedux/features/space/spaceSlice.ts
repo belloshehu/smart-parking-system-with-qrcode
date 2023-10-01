@@ -25,6 +25,7 @@ type Reservation = {
 };
 type stateTypes = {
   selectedSpace: Space | null;
+  isModalOpen: boolean;
   reservation: Reservation;
 };
 
@@ -32,6 +33,7 @@ const spaceSlice = createSlice({
   name: "space",
   initialState: {
     selectedSpace: null,
+    isModalOpen: false,
     reservation: {
       durationHour: 1,
       durationMinutes: 0,
@@ -94,6 +96,9 @@ const spaceSlice = createSlice({
         vehicleNumber: "",
       };
     },
+    setIsModalOpen: (state: stateTypes, { payload }: { payload: boolean }) => {
+      state.isModalOpen = payload;
+    },
   },
 });
 
@@ -106,5 +111,6 @@ export const {
   setDurationHours,
   setDuration,
   setCost,
+  setIsModalOpen,
 } = spaceSlice.actions;
 export default spaceSlice.reducer;

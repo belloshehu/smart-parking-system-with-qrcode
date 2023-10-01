@@ -55,9 +55,16 @@ export async function POST(request: NextRequest) {
       { status: StatusCodes.CREATED }
     );
   } catch (error: any) {
+    console.log(error.code, error.keyValue);
+    let message;
+    if (error.code === 11000) {
+      message = `ID ${error.keyValue.id} is already used`;
+    } else {
+      message = error.message;
+    }
     return NextResponse.json(
       {
-        message: error.message,
+        message,
       },
       { status: StatusCodes.BAD_REQUEST }
     );

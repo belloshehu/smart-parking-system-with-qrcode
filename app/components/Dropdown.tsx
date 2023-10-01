@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaUser } from "react-icons/fa";
 import { logout } from "@/utils/auth";
+import LinkItem from "./LinkItem";
 
 const Dropdown = ({ showDropdown }: { showDropdown: boolean }) => {
   const dispatch = useDispatch();
@@ -24,8 +25,14 @@ const Dropdown = ({ showDropdown }: { showDropdown: boolean }) => {
         <h3>Hello, {user.firstName}</h3>
       </div>
       <div className="w-full flex flex-col gap-4">
-        <Link href={"/dashboard"}>Dashboard</Link>
-        <Link href={"/profile"}>Profile</Link>
+        <LinkItem url="/dashboard" children={"Dashboard"} />
+        <LinkItem
+          url="/dashboard/admin/reservations"
+          children={"Reservations"}
+        />
+        {user.role === "admin" ? (
+          <LinkItem url="/dashboard/admin/spaces" children={"Spaces"} />
+        ) : null}
         <button
           className="p-2 px-5 rounded-3xl bg-primary text-white w-full"
           onClick={() => logout(dispatch, router)}>

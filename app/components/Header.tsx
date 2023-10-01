@@ -40,7 +40,7 @@ export const Header = () => {
           <div className="flex items-center gap-2">
             <Link
               href={"/auth/signup"}
-              className="p-2 px-5 rounded-3xl bg-cyan-900 text-white">
+              className="p-2 px-5 rounded-3xl bg-primary text-white">
               Sign up
             </Link>
             <Link href={"/auth/login"}>Login</Link>
@@ -49,7 +49,7 @@ export const Header = () => {
           <div className="flex gap-2 items-center">
             <div className="flex gap-6 items-center">
               <Link href={"/auth/login"}>
-                <FaUserCircle className="text-3xl text-cyan-900 shadow-2xl rounded-full ring-2 ring-white" />
+                <FaUserCircle className="text-3xl text-primary shadow-2xl rounded-full ring-2 ring-white" />
               </Link>
             </div>
             <small>Hello, {user?.firstName}</small>
@@ -63,7 +63,7 @@ export const Header = () => {
       </div>
       <div className="visible inline md:hidden">
         <CiMenuFries
-          className="text-cyan-900 text-2xl"
+          className="text-primary text-2xl"
           onClick={() => dispatch(openModal())}
         />
       </div>

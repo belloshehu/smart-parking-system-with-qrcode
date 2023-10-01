@@ -1,10 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Alegreya } from "next/font/google";
 import { Providers } from "./GlobalRedux/provider";
 import { Header } from "./components/Header";
 import { usePathname } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
+const algereya = Alegreya({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+});
 
 export const metadata: Metadata = {
   title: "Smart-parking-system",
@@ -19,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-        <body className={`overflow-x-clip ${inter.className}`}>
+        <body className={`overflow-x-clip ${algereya.className}`}>
           <Header />
           {children}
         </body>

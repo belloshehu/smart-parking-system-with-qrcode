@@ -1,8 +1,38 @@
 "use client";
+import axios from "axios";
 import { CategoryList } from "./components/CategoryList";
 import SpaceList from "./components/SpaceList";
+import { useEffect, useState } from "react";
+
+type SpaceType = {
+  _id: string;
+  id: string;
+  price: number;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
 
 export default async function Home() {
+  const [loading, setLoading] = useState(false);
+  const [spaces, setSpaces] = useState<SpaceType[]>([]);
+  useEffect(() => {
+    const getSpaces = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/api/space");
+        const spaceData = await data.spaces;
+        setSpaces(spaceData);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getSpaces();
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-5 md:px-40 pb-10">
       <div className="w-full flex flex-col gap-5 text-center justify-center items-center py-10">
@@ -29,7 +59,7 @@ export default async function Home() {
         <h1 className="text-2xl  md:text-3xl text-slate-600 text-left font-bold">
           Spaces
         </h1>
-        <SpaceList />
+        <SpaceList spaces={spaces} loading={loading} />
       </div>
     </main>
   );
