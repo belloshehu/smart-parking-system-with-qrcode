@@ -9,7 +9,10 @@ import { useDispatch, useSelector } from "react-redux";
 import SpaceList from "@/app/components/SpaceList";
 import Link from "next/link";
 import SpaceForm from "@/app/components/SpaceForm";
-import { setIsModalOpen } from "@/app/GlobalRedux/features/space/spaceSlice";
+import {
+  setIsModalOpen,
+  setSpaces,
+} from "@/app/GlobalRedux/features/space/spaceSlice";
 
 type SpaceType = {
   _id: string;
@@ -22,19 +25,20 @@ type SpaceType = {
   __v: number;
 };
 
-const Dashboard = () => {
+const AdminSpaces = () => {
   const [loading, setLoading] = useState(false);
-  const [spaces, setSpaces] = useState<SpaceType[]>([]);
+  // const [spaces, setSpaces] = useState<SpaceType[]>([]);
 
+  const { spaces } = useSelector((store: any) => store.space);
   const { user } = useSelector((store: any) => store.auth);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
-
+  const dispatch = useDispatch();
   const getSpaces = async () => {
     setLoading(true);
     try {
       const { data } = await axios.get("/api/space");
       const spaceData = await data.spaces;
-      setSpaces(spaceData);
+      dispatch(setSpaces(spaceData));
     } catch (error) {
       console.log(error);
     } finally {
@@ -73,15 +77,17 @@ const Dashboard = () => {
           <DashboardBadge
             status="VIP"
             count={
-              spaces.filter((space) => space.type.toLowerCase() === "vip")
-                .length
+              spaces.filter(
+                (space: SpaceType) => space.type.toLowerCase() === "vip"
+              ).length
             }
           />
           <DashboardBadge
             status="Normal"
             count={
-              spaces.filter((space) => space.type.toLowerCase() === "normal")
-                .length
+              spaces.filter(
+                (space: SpaceType) => space.type.toLowerCase() === "normal"
+              ).length
             }
           />
         </div>
@@ -128,4 +134,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminSpaces;

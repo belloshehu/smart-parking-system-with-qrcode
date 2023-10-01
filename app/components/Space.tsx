@@ -1,17 +1,19 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { CategoryType } from "./CategoryType";
-import { FaCar, FaTimes } from "react-icons/fa";
+import { FaCar, FaSpinner, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setSelectedSpace,
   setReservation,
+  removeSpace,
 } from "../GlobalRedux/features/space/spaceSlice";
 import { calculateCost, calculateDuration } from "@/utils";
 import ReservationForm from "./ReservationForm";
 import { SelectedSpace } from "./SelectedSpace";
 import FormMessage from "./FormMessage";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import axios from "axios";
 
 type Props = {
   _id: string;
@@ -28,9 +30,12 @@ type Message = {
   type: "error" | "success";
 };
 export const Space = ({ space }: { space: Props }) => {
-  const { id, price, type, status } = space;
+  const { id, price, type, status, _id } = space;
   const router = useRouter();
-  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
+  const reservationDialogRef = useRef<HTMLDialogElement | null>(null);
+  const deleteDialogRef = useRef<HTMLDialogElement | null>(null);
   const [hours, setHours] = useState<number>(1);
   const [minutes, setMinutes] = useState<number>(0);
   const [message, setMessage] = useState<Message>({ text: "", type: "error" });
@@ -41,11 +46,36 @@ export const Space = ({ space }: { space: Props }) => {
 
   const handleClick = () => {
     dispatch(setSelectedSpace({ ...space }));
-    console.log(dialogRef);
-    if (dialogRef) {
-      dialogRef?.current?.showModal();
+    if (reservationDialogRef) {
+      reservationDialogRef?.current?.showModal();
     }
   };
+
+  const deleteBtnClick = () => {
+    if (deleteDialogRef) {
+      deleteDialogRef?.current?.showModal();
+    }
+  };
+  const deleteSpace = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.delete(`/api/space/${_id}`);
+      setMessage({
+        type: "success",
+        text: "Space deleted successfully",
+      });
+      dispatch(removeSpace(_id));
+    } catch (error) {
+      console.log(error);
+      setMessage({
+        type: "error",
+        text: "Error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const editSpace = () => {};
 
   const handleProceed = async () => {
     if (reservation?.vehicleNumber === "") {
@@ -93,7 +123,12 @@ export const Space = ({ space }: { space: Props }) => {
     }
   };
   const close = () => {
-    dialogRef?.current?.close();
+    reservationDialogRef?.current?.close();
+    deleteDialogRef?.current?.close();
+    setMessage({
+      type: "error",
+      text: "",
+    });
   };
   return (
     <>
@@ -109,21 +144,40 @@ export const Space = ({ space }: { space: Props }) => {
           </div>
           <FaCar className="text-5xl  line-through" />
         </div>
-        <button
-          disabled={status === "occupied"}
-          className={`${
-            status === "occupied" ? "bg-slate-400" : "bg-primary"
-          } text-white rounded-full text-center p-2 px-5 my-3 shadow-md shadow-slate-600 w-full md:w-fit`}
-          type="button"
-          onClick={handleClick}>
-          {status === "free" ? "Reserve now" : "Occupied"}
-        </button>
+        {!pathname.includes("/admin") ? (
+          <button
+            disabled={status === "occupied"}
+            className={`${
+              status === "occupied" ? "bg-slate-400" : "bg-primary"
+            } text-white rounded-full text-center p-2 px-5 my-3 shadow-md shadow-slate-600 w-full md:w-fit`}
+            type="button"
+            onClick={handleClick}>
+            {status === "free" ? "Reserve now" : "Occupied"}
+          </button>
+        ) : (
+          <div className="flex justify-between items-center w-full mt-5">
+            <button
+              className="p-2 px-4 rounded-md text-white bg-primary"
+              onClick={editSpace}>
+              Edit
+            </button>
+            {/* Space that is not free should not be deleted */}
+            <button
+              disabled={status !== "free"}
+              className={`p-2 px-4 rounded-md text-white ${
+                status !== "free" ? "bg-red-400 line-through" : "bg-red-800"
+              } `}
+              onClick={deleteBtnClick}>
+              Delete
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Dialog */}
       <dialog
         onChange={dialogFormChangeHandler}
-        ref={dialogRef}
+        ref={reservationDialogRef}
         className="w-full md:w-3/5 backdrop:backdrop-blur-sm bg-slate-200 p-5 md:p-8 rounded-md">
         <button
           type="button"
@@ -162,6 +216,49 @@ export const Space = ({ space }: { space: Props }) => {
             className="p-2 px-4 bg-primary text-white text-center rounded-md"
             onClick={handleProceed}>
             Proceed
+          </button>
+        </footer>
+      </dialog>
+
+      {/* Delete dialog */}
+      <dialog
+        ref={deleteDialogRef}
+        className="w-full md:w-2/5 backdrop:backdrop-blur-sm bg-slate-200 p-5 md:p-8 rounded-md">
+        <button
+          type="button"
+          className="top-2 right-2 absolute text-primary"
+          onClick={close}>
+          <FaTimes />
+        </button>
+        <header>
+          <h1 className="text-xl  text-primary font-semibold mb-4">
+            {"Delete confirmation"}
+          </h1>
+        </header>
+        <div className="flex flex-col justify-center items-center h-full w-full relative">
+          <FormMessage message={message} />
+          <div className="flex flex-col md:flex-row justify-center items-center gap-5 mt-8 h-full w-full">
+            <p className="font-bold text-center">
+              Want to delete this space with ID{" "}
+              <span className="text-primary">{id}</span>?
+            </p>
+          </div>
+        </div>
+
+        <footer className="flex justify-end gap-5 items-center w-full mt-10">
+          <button
+            className="p-2 px-4 bg-slate-400 text-primary text-center rounded-md"
+            onClick={close}>
+            Cancel
+          </button>
+          <button
+            className="p-2 px-4 bg-primary text-white text-center rounded-md"
+            onClick={deleteSpace}>
+            {loading ? (
+              <FaSpinner className="animate-spin text-white m-1 mx-2" />
+            ) : (
+              <span>Yes Delete</span>
+            )}
           </button>
         </footer>
       </dialog>

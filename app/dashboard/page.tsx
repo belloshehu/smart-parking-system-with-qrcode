@@ -78,7 +78,7 @@ const Dashboard = () => {
       </div>
 
       {/* my spaces */}
-      <div className="min-w-full p-0 md:p-20">
+      <div className="w-full p-0 md:p-0">
         <h1 className="text-primary text-xl my-4 font-bold ml-0 md:ml-24">
           My Reservations
         </h1>
