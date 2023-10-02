@@ -25,13 +25,10 @@ const Dropdown = ({ showDropdown }: { showDropdown: boolean }) => {
         <h3>Hello, {user.firstName}</h3>
       </div>
       <div className="w-full flex flex-col gap-4">
-        <LinkItem url="/dashboard" children={"Dashboard"} />
-        <LinkItem
-          url="/dashboard/admin/reservations"
-          children={"Reservations"}
-        />
+        <LinkItem url="/dashboard">Dashboard</LinkItem>
+        <LinkItem url="/dashboard/admin/reservations">Reservations</LinkItem>
         {user.role === "admin" ? (
-          <LinkItem url="/dashboard/admin/spaces" children={"Spaces"} />
+          <LinkItem url="/dashboard/admin/spaces">Spaces</LinkItem>
         ) : null}
         <button
           className="p-2 px-5 rounded-3xl bg-primary text-white w-full"

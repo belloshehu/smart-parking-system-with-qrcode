@@ -9,7 +9,7 @@ import CustomInputField from "./CustomInputField";
 import PhoneNumberField from "./PhoneNumberField";
 import { useRouter } from "next/navigation";
 import SubmitButton from "./SubmitButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiWarning } from "react-icons/ci";
 import FormError from "./FormMessage";
 
@@ -19,6 +19,11 @@ type responseMsgType = {
 };
 
 const SignupForm = () => {
+  let timeout: any = null;
+  useEffect(() => {
+    return clearTimeout(timeout);
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [responseMsg, setResponseMsg] = useState<responseMsgType>({
     text: "",
@@ -34,21 +39,27 @@ const SignupForm = () => {
           phoneNumber: "",
           firstName: "",
           lastName: "",
-          //   terms: "",
-          // phoneNumber: "",
           password: "",
           passwordRepeat: "",
         }}
-        onSubmit={async (values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
           setIsLoading(true);
           axios
             .post("/api/signup", values)
             .then((res) => {
+              resetForm();
               toast.success("Signed up successfully");
+              setResponseMsg({
+                text: "Signed up successfully",
+                type: "success",
+              });
               setIsLoading(false);
-              router.push(
-                `/auth/verifyEmail/${res.data.verificationCodeExpiry}`
-              );
+              timeout = setTimeout(() => {
+                router.push("/auth/login");
+              }, 1000);
+              // router.push(
+              //   `/auth/verifyEmail/${res.data.verificationCodeExpiry}`
+              // );
             })
             .catch((error) => {
               toast.error(

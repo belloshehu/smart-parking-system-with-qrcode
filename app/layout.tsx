@@ -4,6 +4,7 @@ import { Inter, Alegreya } from "next/font/google";
 import { Providers } from "./GlobalRedux/provider";
 import { Header } from "./components/Header";
 import { usePathname } from "next/navigation";
+import ToasterContext from "./context/ToasterContext";
 const inter = Inter({ subsets: ["latin"] });
 const algereya = Alegreya({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({
       <Providers>
         <body className={`overflow-x-clip ${algereya.className}`}>
           <Header />
+          <ToasterContext />
           {children}
         </body>
       </Providers>

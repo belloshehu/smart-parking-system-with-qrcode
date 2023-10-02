@@ -111,10 +111,10 @@ const LoginForm = () => {
 
             <div className="flex flex-col gap-1 justify-center items-center w-full my-4">
               <div className="flex justify-between items-center text-blue-500 underline w-full">
-                <Link href={"/auth/verificationCode/email"}>Verify email</Link>
-                <Link href={"/auth/verificationCode/password"}>
+                {/* <Link href={"/auth/verificationCode/email"}>Verify email</Link> */}
+                {/* <Link href={"/auth/verificationCode/password"}>
                   forgot password
-                </Link>
+                </Link> */}
               </div>
               <SubmitButton isLoading={isLoading} />
             </div>

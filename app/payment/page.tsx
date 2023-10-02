@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Reservation from "../components/Reservation";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import PaystackPop from "@paystack/inline-js";
+import { PaystackButton } from "react-paystack";
 import { FaMoneyBill } from "react-icons/fa";
 import Link from "next/link";
 import axios from "axios";
@@ -16,53 +16,45 @@ const Payment = () => {
   const { user } = useSelector((store: any) => store.auth);
 
   useEffect(() => {
-    console.log(reservation);
     if (!user) {
       router.push("/auth/login");
     }
   }, []);
 
   useEffect(() => {
-    console.log(reservation);
     if (!selectedSpace) {
       router.push("/");
     }
   }, [selectedSpace, reservation]);
 
-  const makePayment = () => {
-    const paystack = new PaystackPop();
-    const amount: any = reservation?.cost;
-    const paystackAmount: number = amount * 100;
-    console.log(reservation);
-    paystack.newTransaction({
-      key: "pk_test_f2f78ad36864d99374867e56ae7887e5eb249408",
-      email: user?.email,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      amount: paystackAmount,
-      async onSuccess(transition: any) {
-        try {
-          const { data } = await axios.post("/api/reservation", {
-            amount: parseInt(reservation.cost),
-            vehicleNumber: reservation.vehicleNumber,
-            spaceId: selectedSpace._id,
-            userId: user.id,
-            checkInDate: reservation.checkInDate,
-            checkInTime: reservation.checkInTime,
-            duration: reservation.duration,
-            paymentReference: transition.reference,
-          });
-          console.log(data);
-          router.push("/dashboard");
-        } catch (error: any) {
-          console.log(error?.data);
-        }
-        console.log(transition);
-      },
-      onCancel() {
-        router.push("/");
-      },
-    });
+  const paystackProps = {
+    text: "Pay Now",
+    publicKey: process.env.PAYSTACK_PUBLIC_KEY!,
+    email: user?.email,
+    name: user?.firstName,
+    firstname: user?.firstName,
+    lastname: user?.lastName,
+    amount: reservation.cost * 100,
+    onSuccess: async (transition: any) => {
+      try {
+        const { data } = await axios.post("/api/reservation", {
+          amount: parseInt(reservation.cost),
+          vehicleNumber: reservation.vehicleNumber,
+          spaceId: selectedSpace._id,
+          userId: user.id,
+          checkInDate: reservation.checkInDate,
+          checkInTime: reservation.checkInTime,
+          duration: reservation.duration,
+          paymentReference: transition.reference,
+        });
+        router.push("/dashboard");
+      } catch (error: any) {
+        console.log(error);
+      }
+    },
+    onCancel: async () => {
+      router.push("/");
+    },
   };
   return (
     <div className="w-full min-h-screen flex flex-col gap-5 justify-start items-center">
@@ -78,11 +70,11 @@ const Payment = () => {
             className="bg-red-600 p-2 px-3 rounded-md text-center text-white flex-2">
             Cancel
           </Link>
-          <button
-            className="bg-white p-2 px-4 flex-1 rounded-md text-primary shadow-md shadow-slate-400"
-            onClick={makePayment}>
-            Make payment now
-          </button>
+          <PaystackButton
+            className="bg-slate-100 p-2 px-3 rounded-md text-center text-primary flex-1"
+            {...paystackProps}
+            currency="NGN"
+          />
         </div>
       </div>
     </div>

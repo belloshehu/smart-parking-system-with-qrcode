@@ -36,3 +36,20 @@ export const reservedSpaces = [
     cost: 3,
   },
 ];
+
+export const pricings = [
+  {
+    id: 0,
+    title: "Normal",
+    price: 10,
+    currency: "N",
+    duration: "minute",
+  },
+  {
+    id: 1,
+    title: "VIP",
+    price: 30,
+    currency: "N",
+    duration: "minute",
+  },
+];

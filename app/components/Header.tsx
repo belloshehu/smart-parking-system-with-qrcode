@@ -31,7 +31,7 @@ export const Header = () => {
           <Link href={"/pricing"}>Pricing</Link>
         </li>
         <li>
-          <Link href={"/dashboard"}>Dashboard</Link>
+          <Link href={"/about"}>About Us</Link>
         </li>
       </ul>
 

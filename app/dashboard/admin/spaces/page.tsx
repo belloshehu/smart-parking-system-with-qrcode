@@ -78,7 +78,7 @@ const AdminSpaces = () => {
           <DashboardBadge
             status="VIP"
             count={
-              spaces.filter(
+              spaces?.filter(
                 (space: SpaceType) => space.type.toLowerCase() === "vip"
               ).length
             }
@@ -86,7 +86,7 @@ const AdminSpaces = () => {
           <DashboardBadge
             status="Normal"
             count={
-              spaces.filter(
+              spaces?.filter(
                 (space: SpaceType) => space.type.toLowerCase() === "normal"
               ).length
             }

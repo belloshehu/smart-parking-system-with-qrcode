@@ -12,27 +12,41 @@ const allowedOrigin =
     : ["http://smart-parking-system.vercel.app"];
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const token = request.cookies.get("token")?.value || "";
+  const isPublicPath = path.includes("/login") || path.includes("/signup");
+  const isAdminPath = path.includes("/admin");
+  const isPrivate = path.includes("/dashboard") || path.includes("/payment");
+
   const origin = request.headers.get("origin");
 
-  if (request.nextUrl.pathname.endsWith("/space")) {
-    const decoded = authenticateUser(request);
-    console.log(decoded);
-    console.log("authenticating users");
-  }
+  // if (isPublicPath && token) {
+  //   return NextResponse.redirect(new URL("/", request.nextUrl));
+  // }
 
-  if (origin && !allowedOrigin.includes(origin)) {
-    return new NextResponse(null, {
-      status: 400,
-      statusText: "Bad Request",
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    });
-  }
+  // if (!isPrivate && !token) {
+  //   return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
+  // }
+
+  // if (request.nextUrl.pathname.endsWith("/space")) {
+  //   const decoded = authenticateUser(request);
+  //   console.log(decoded);
+  //   console.log("authenticating users");
+  // }
+
+  // if (origin && !allowedOrigin.includes(origin)) {
+  //   return new NextResponse(null, {
+  //     status: 400,
+  //     statusText: "Bad Request",
+  //     headers: {
+  //       "Content-Type": "text/plain",
+  //     },
+  //   });
+  // }
 
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: "/api/:path*",
-};
+// export const config = { matcher: "/((?!.*\\.).*)" };
+
+export const config = { matcher: "/api/:path*" };

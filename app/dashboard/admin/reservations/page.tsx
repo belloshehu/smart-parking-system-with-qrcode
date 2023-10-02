@@ -62,7 +62,7 @@ const Dashboard = () => {
           <DashboardBadge
             status="free"
             count={
-              reservations.filter(
+              reservations?.filter(
                 (reservation) => reservation.space.status === "free"
               ).length
             }
@@ -70,7 +70,7 @@ const Dashboard = () => {
           <DashboardBadge
             status="occupied"
             count={
-              reservations.filter(
+              reservations?.filter(
                 (reservation) => reservation.space.status === "occupied"
               ).length
             }

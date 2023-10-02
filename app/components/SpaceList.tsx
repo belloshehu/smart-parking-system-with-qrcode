@@ -33,7 +33,7 @@ const SpaceList = async ({
       </div>
     );
   }
-  if (spaces.length === 0) {
+  if (spaces?.length === 0 || !spaces) {
     return (
       <div className="flex flex-col gap-3 justify-center items-center bg-slate-100 p-5">
         <p>Oops! there are no spaces yet</p>
@@ -42,7 +42,7 @@ const SpaceList = async ({
         {!pathname.includes("/admin") && (
           <Link
             className="bg-primary text-white rounded-md p-2 px-4"
-            href={"/spaces"}>
+            href={"/dashboard/admin/spaces"}>
             Add parking Spaces
           </Link>
         )}
@@ -51,7 +51,7 @@ const SpaceList = async ({
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-20 w-full gap-8 my-5">
-      {spaces.map((space) => (
+      {spaces?.map((space) => (
         <Space key={space._id} space={space} />
       ))}
     </div>

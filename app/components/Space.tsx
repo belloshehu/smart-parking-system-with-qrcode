@@ -87,6 +87,7 @@ export const Space = ({ space }: { space: Props }) => {
   const editSpace = () => {};
 
   const handleProceed = async () => {
+    setLoading(true);
     if (reservation?.vehicleNumber === "") {
       // toast.error("Please select checkin time");
       setMessage({
@@ -227,9 +228,14 @@ export const Space = ({ space }: { space: Props }) => {
             Cancel
           </button>
           <button
+            disabled={loading}
             className="p-2 px-4 bg-primary text-white text-center rounded-md"
             onClick={handleProceed}>
-            Proceed
+            {loading ? (
+              <FaSpinner className={`${loading ? "animate-spin" : ""}`} />
+            ) : (
+              <span>Proceed</span>
+            )}
           </button>
         </footer>
       </dialog>
