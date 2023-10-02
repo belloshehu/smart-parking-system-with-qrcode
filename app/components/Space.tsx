@@ -3,10 +3,12 @@ import React, { useRef, useState } from "react";
 import { CategoryType } from "./CategoryType";
 import { FaCar, FaSpinner, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import SpaceForm from "./SpaceForm";
 import {
   setSelectedSpace,
   setReservation,
   removeSpace,
+  clearSelectedSpace,
 } from "../GlobalRedux/features/space/spaceSlice";
 import { calculateCost, calculateDuration } from "@/utils";
 import ReservationForm from "./ReservationForm";
@@ -36,6 +38,7 @@ export const Space = ({ space }: { space: Props }) => {
   const [loading, setLoading] = useState(false);
   const reservationDialogRef = useRef<HTMLDialogElement | null>(null);
   const deleteDialogRef = useRef<HTMLDialogElement | null>(null);
+  const editDialogRef = useRef<HTMLDialogElement | null>(null);
   const [hours, setHours] = useState<number>(1);
   const [minutes, setMinutes] = useState<number>(0);
   const [message, setMessage] = useState<Message>({ text: "", type: "error" });
@@ -54,6 +57,12 @@ export const Space = ({ space }: { space: Props }) => {
   const deleteBtnClick = () => {
     if (deleteDialogRef) {
       deleteDialogRef?.current?.showModal();
+    }
+  };
+
+  const editBtnClick = () => {
+    if (editDialogRef) {
+      editDialogRef?.current?.showModal();
     }
   };
   const deleteSpace = async () => {
@@ -125,10 +134,12 @@ export const Space = ({ space }: { space: Props }) => {
   const close = () => {
     reservationDialogRef?.current?.close();
     deleteDialogRef?.current?.close();
+    editDialogRef?.current?.close();
     setMessage({
       type: "error",
       text: "",
     });
+    // dispatch(clearSelectedSpace());
   };
   return (
     <>
@@ -157,8 +168,11 @@ export const Space = ({ space }: { space: Props }) => {
         ) : (
           <div className="flex justify-between items-center w-full mt-5">
             <button
-              className="p-2 px-4 rounded-md text-white bg-primary"
-              onClick={editSpace}>
+              disabled={status !== "free"}
+              className={`p-2 px-4 rounded-md text-white ${
+                status !== "free" ? "bg-blue-500 line-through" : "bg-primary"
+              } `}
+              onClick={editBtnClick}>
               Edit
             </button>
             {/* Space that is not free should not be deleted */}
@@ -261,6 +275,28 @@ export const Space = ({ space }: { space: Props }) => {
             )}
           </button>
         </footer>
+      </dialog>
+
+      {/* Edit dialog */}
+
+      <dialog
+        ref={editDialogRef}
+        className="w-full h-fit md:w-1/3 backdrop:backdrop-blur-sm bg-slate-200 p-5 rounded-md">
+        <button
+          type="button"
+          className="top-2 right-2 absolute text-primary"
+          onClick={close}>
+          <FaTimes />
+        </button>
+        <header className="flex justify-center items-center">
+          <h1 className="text-xl  text-primary font-semibold mb-4">
+            {"Edit Space"}
+          </h1>
+        </header>
+
+        <div className="flex flex-col justify-center items-center h-full w-full relative">
+          <SpaceForm space={space} />
+        </div>
       </dialog>
     </>
   );

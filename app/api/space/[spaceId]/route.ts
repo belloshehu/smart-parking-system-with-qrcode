@@ -53,10 +53,11 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
   }
 }
 
-export async function PATCH(request: NextRequest) {
+export async function PATCH(request: NextRequest, { params }: { params: any }) {
   try {
     connectDB();
-    const { _id, id, status, type, price } = await request.json();
+    const spaceId = params.spaceId;
+    const { id, status, type, price } = await request.json();
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
       NextResponse.redirect("/login");
@@ -70,15 +71,9 @@ export async function PATCH(request: NextRequest) {
         { status: StatusCodes.UNAUTHORIZED }
       );
     }
-    if (!_id) {
-      return NextResponse.json(
-        { message: "Space _id is required" },
-        { status: StatusCodes.BAD_REQUEST }
-      );
-    }
     if (!id) {
       return NextResponse.json(
-        { message: "Space ID is required" },
+        { message: "Space id is required" },
         { status: StatusCodes.BAD_REQUEST }
       );
     }
@@ -100,11 +95,11 @@ export async function PATCH(request: NextRequest) {
         { status: StatusCodes.BAD_REQUEST }
       );
     }
-    const space = await Space.findById(_id);
+    const space = await Space.findById(spaceId);
     if (!space) {
       return NextResponse.json(
         {
-          message: `Space with a id ${id} not found`,
+          message: `Space with a id ${spaceId} not found`,
         },
         { status: StatusCodes.NOT_FOUND }
       );
@@ -116,8 +111,9 @@ export async function PATCH(request: NextRequest) {
     await space.save();
     return NextResponse.json(
       {
-        message: "Space successfully updated",
+        message: "Space updated successfully",
         space,
+        success: true,
       },
       { status: StatusCodes.OK }
     );

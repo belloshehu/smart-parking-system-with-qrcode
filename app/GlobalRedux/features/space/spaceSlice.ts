@@ -59,10 +59,21 @@ const spaceSlice = createSlice({
     removeSpace: (state: stateTypes, { payload }: { payload: string }) => {
       state.spaces = state.spaces.filter((space) => space._id !== payload);
     },
+    addSpace: (state: stateTypes, { payload }: { payload: Space }) => {
+      state.spaces = [...state.spaces, payload];
+    },
+    updateSpace: (state: stateTypes, { payload }: { payload: Space }) => {
+      state.spaces = state.spaces.map((space) => {
+        if (space._id === payload._id) {
+          return payload;
+        }
+        return space;
+      });
+    },
     setSelectedSpace: (state: stateTypes, { payload }: { payload: Space }) => {
       state.selectedSpace = payload;
     },
-    clearSelectedState: (state: stateTypes) => {
+    clearSelectedSpace: (state: stateTypes) => {
       state.selectedSpace = null;
     },
     setReservation: (
@@ -115,7 +126,7 @@ const spaceSlice = createSlice({
 
 export const {
   setSelectedSpace,
-  clearSelectedState,
+  clearSelectedSpace,
   setReservation,
   resetReservation,
   setDurationMinutes,
@@ -125,5 +136,7 @@ export const {
   setIsModalOpen,
   setSpaces,
   removeSpace,
+  addSpace,
+  updateSpace,
 } = spaceSlice.actions;
 export default spaceSlice.reducer;

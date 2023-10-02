@@ -8,27 +8,33 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import FormMessage from "./FormMessage";
 import SubmitButton from "./SubmitButton";
-import { setUser } from "../GlobalRedux/features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CustomSelectField from "./CustomSelectField";
 import {
+  addSpace,
   resetReservation,
-  setIsModalOpen,
-  setReservation,
+  updateSpace,
 } from "../GlobalRedux/features/space/spaceSlice";
-import { formatedTodayDate } from "@/utils";
-import dayjs from "dayjs";
 
 type responseMsgType = {
   text: string;
   type: "error" | "success";
 };
 
-const SpaceForm = () => {
-  const router = useRouter();
+type Space = {
+  _id: string;
+  id: string;
+  price: number;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
+const SpaceForm = ({ space }: { space: Space | null }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { reservation } = useSelector((store: any) => store.space);
   const [responseMsg, setResponseMsg] = useState<responseMsgType>({
     text: "",
     type: "error",
@@ -43,45 +49,72 @@ const SpaceForm = () => {
       className={`w-full md:w-3/5 mx-auto  md:p-0 p-0  relative border-2 rounded-md`}>
       <Formik
         initialValues={{
-          id: "",
-          type: "normal",
-          price: 10, // N10 per minute
-          status: "free",
+          id: space?.id || "",
+          type: space?.type || "normal",
+          price: space?.price || 10, // N10 per minute
+          status: space?.status || "free",
         }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           setIsLoading(true);
-          axios
-            .post("/api/space", values)
-            .then((callback: any) => {
-              if (callback?.error) {
-                toast.error(callback?.error);
-                if (callback.error?.toLowerCase() === "email not verified") {
-                  router.push("/auth/verificationCode/email");
+          if (space) {
+            axios
+              .patch(`/api/space/${space._id}`, values)
+              .then((callback: any) => {
+                if (callback?.error) {
+                  toast.error(callback?.error);
+                  setResponseMsg({ type: "error", text: callback.error });
                 }
-                setResponseMsg({ type: "error", text: callback.error });
-              }
-              if (callback?.data.success) {
-                toast.success("Space added successfully");
+                if (callback?.data.success) {
+                  dispatch(updateSpace(callback?.data?.space));
+                  setResponseMsg({
+                    text: callback.data.message,
+                    type: "success",
+                  });
+                }
+                setIsLoading(false);
+              })
+              .catch((error) => {
+                console.log(error);
+                toast.error(
+                  error.response.data.message || "Something went wrong"
+                );
                 setResponseMsg({
-                  text: callback.data.message,
-                  type: "success",
+                  text: error.response.data.message || "Something went wrong",
+                  type: "error",
                 });
-                resetForm();
-              }
-
-              setIsLoading(false);
-            })
-            .catch((error) => {
-              toast.error(
-                error.response.data.message || "Something went wrong"
-              );
-              setResponseMsg({
-                text: error.response.data.message || "Something went wrong",
-                type: "error",
+                setIsLoading(false);
               });
+          } else {
+            axios
+              .post("/api/space", values)
+              .then((callback: any) => {
+                if (callback?.error) {
+                  toast.error(callback?.error);
+                  setResponseMsg({ type: "error", text: callback.error });
+                }
+                if (callback?.data.success) {
+                  dispatch(addSpace(callback?.data?.space));
+                  toast.success(callback.data.message);
+                  setResponseMsg({
+                    text: callback.data.message,
+                    type: "success",
+                  });
+                  resetForm();
+                }
 
-              setIsLoading(false);
-            });
+                setIsLoading(false);
+              })
+              .catch((error) => {
+                toast.error(
+                  error.response.data.message || "Something went wrong"
+                );
+                setResponseMsg({
+                  text: error.response.data.message || "Something went wrong",
+                  type: "error",
+                });
+                setIsLoading(false);
+              });
+          }
         }}
         validationSchema={Yup.object({
           id: Yup.string().required("Space ID required"),

@@ -10,6 +10,7 @@ import SpaceList from "@/app/components/SpaceList";
 import Link from "next/link";
 import SpaceForm from "@/app/components/SpaceForm";
 import {
+  clearSelectedSpace,
   setIsModalOpen,
   setSpaces,
 } from "@/app/GlobalRedux/features/space/spaceSlice";
@@ -30,10 +31,10 @@ const AdminSpaces = () => {
   // const [spaces, setSpaces] = useState<SpaceType[]>([]);
 
   const { spaces } = useSelector((store: any) => store.space);
-  const { user } = useSelector((store: any) => store.auth);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const dispatch = useDispatch();
-  const getSpaces = async () => {
+
+  const getSpaces = React.useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axios.get("/api/space");
@@ -44,10 +45,10 @@ const AdminSpaces = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
   const close = () => {
     dialogRef?.current?.close();
-    getSpaces();
   };
 
   useEffect(() => {
@@ -110,7 +111,7 @@ const AdminSpaces = () => {
         </div>
       </div>
 
-      {/* Dialog */}
+      {/* New Space Dialog */}
       <dialog
         ref={dialogRef}
         className="w-full h-fit md:w-1/3 backdrop:backdrop-blur-sm bg-slate-200 p-5 rounded-md">
@@ -127,11 +128,11 @@ const AdminSpaces = () => {
         </header>
 
         <div className="flex flex-col justify-center items-center h-full w-full relative">
-          <SpaceForm />
+          <SpaceForm space={null} />
         </div>
       </dialog>
     </div>
   );
 };
 
-export default AdminSpaces;
+export default React.memo(AdminSpaces);
