@@ -15,7 +15,7 @@ const Dropdown = ({ showDropdown }: { showDropdown: boolean }) => {
   const { user } = useSelector((store: any) => store.auth);
   return (
     <div
-      className={`flex flex-col gap-5 w-1/6 p-5 shadow-lg absolute top-[100%] right-0 bg-cyan-100 ${
+      className={`hidden md:flex flex-col gap-5 w-1/6 p-5 shadow-lg absolute top-[100%] right-0 bg-cyan-100 ${
         showDropdown
           ? "translate-x-0 rotate-0 scale-100"
           : "translate-x-[100%] rotate-[360deg] scale-[10%]"

@@ -13,12 +13,12 @@ const allowedOrigin =
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const token = request.cookies.get("token")?.value || "";
-  const isPublicPath = path.includes("/login") || path.includes("/signup");
-  const isAdminPath = path.includes("/admin");
-  const isPrivate = path.includes("/dashboard") || path.includes("/payment");
+  // const token = request.cookies.get("token")?.value || "";
+  // const isPublicPath = path.includes("/login") || path.includes("/signup");
+  // const isAdminPath = path.includes("/admin");
+  // const isPrivate = path.includes("/dashboard") || path.includes("/payment");
 
-  const origin = request.headers.get("origin");
+  // const origin = request.headers.get("origin");
 
   // if (isPublicPath && token) {
   //   return NextResponse.redirect(new URL("/", request.nextUrl));

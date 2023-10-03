@@ -94,6 +94,7 @@ export const Space = ({ space }: { space: Props }) => {
         type: "error",
         text: "Please enter vehicle number",
       });
+      setLoading(false);
       return;
     }
     if (reservation?.checkInDate === "") {
@@ -102,6 +103,7 @@ export const Space = ({ space }: { space: Props }) => {
         type: "error",
         text: "Please enter checkin date",
       });
+      setLoading(false);
       return;
     }
     if (reservation?.checkInTime === "") {
@@ -109,6 +111,7 @@ export const Space = ({ space }: { space: Props }) => {
         type: "error",
         text: "Please enter checkin time",
       });
+      setLoading(false);
       return;
     }
     dispatch(
@@ -122,6 +125,7 @@ export const Space = ({ space }: { space: Props }) => {
         duration: calculateDuration(hours, minutes),
       })
     );
+    setLoading(false);
     router.push("payment");
   };
 

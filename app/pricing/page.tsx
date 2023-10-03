@@ -12,10 +12,10 @@ const PricingPage = () => {
       </div>
 
       {/* my spaces */}
-      <div className="w-full p-0 md:p-10 text-center">
-        {/* <h3 className="my-5 text-primary text-xl font-semibold">
+      <div className="w-full px-5 md:p-10 text-center my-8 md:my-0">
+        <h3 className="my-5 text-primary text-xl text-left">
           Our pricing plans
-        </h3> */}
+        </h3>
         <div className="w-ful grid grid-cols-1 md:grid-cols-2 gap-5">
           {pricings.map((pricing) => (
             <Pricing key={pricing.id} {...pricing} />

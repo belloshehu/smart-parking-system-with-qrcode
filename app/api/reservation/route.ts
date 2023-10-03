@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     connectDB();
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/login");
+      NextResponse.redirect("/auth/login");
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
   try {
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/login");
+      NextResponse.redirect("/auth/login");
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {

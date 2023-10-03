@@ -18,6 +18,7 @@ type SpaceType = {
 export default async function Home() {
   const [loading, setLoading] = useState(false);
   const [spaces, setSpaces] = useState<SpaceType[]>([]);
+  
   useEffect(() => {
     const getSpaces = async () => {
       setLoading(true);

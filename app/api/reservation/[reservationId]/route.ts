@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
     const id = params.reservationId;
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/login");
+      NextResponse.redirect("/auth/login");
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {
@@ -60,7 +60,7 @@ export async function DELETE(
     const id = params.reservationId;
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/login");
+      NextResponse.redirect("/auth/login");
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {
@@ -115,7 +115,7 @@ export async function PATCH(request: NextRequest, { params }: { params: any }) {
     const id = params.reservationId;
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/login");
+      NextResponse.redirect("/auth/login");
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {

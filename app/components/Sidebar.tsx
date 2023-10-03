@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaLock, FaTimesCircle, FaUser } from "react-icons/fa";
 import { logout } from "@/utils/auth";
 import { closeModal } from "../GlobalRedux/features/modal/modalSlice";
+import LinkItem from "./LinkItem";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -32,18 +33,30 @@ const Sidebar = () => {
         <Link onClick={closeSidebar} href={"/dashboard"}>
           Dashboard
         </Link>
-        <Link onClick={closeSidebar} href={"/profile"}>
+        <LinkItem url="/pricing">Pricing</LinkItem>
+        <LinkItem url="/about">About Us</LinkItem>
+        {/* <Link onClick={closeSidebar} href={"/profile"}>
           Profile
-        </Link>
+        </Link> */}
+        {user?.role === "admin" ? (
+          <div className="flex flex-col gap-4 w-full">
+            <LinkItem url="/dashboard/admin/reservations">
+              Reservations
+            </LinkItem>
+            <LinkItem url="/dashboard/admin/spaces">Spaces</LinkItem>
+          </div>
+        ) : null}
       </div>
 
       <div className="w-full mx-auto">
         {user ? (
-          <button
-            className="p-2 px-5 rounded-3xl bg-primary text-white w-full"
-            onClick={() => logout(dispatch, router)}>
-            log out
-          </button>
+          <div className="flex flex-col items-center justify-between gap-4 w-full mt-5">
+            <button
+              className="p-2 px-5 rounded-3xl bg-primary text-white w-full shadow-sm shadow-slate-400"
+              onClick={() => logout(dispatch, router)}>
+              log out
+            </button>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-between gap-4 w-full mt-5">
             <Link

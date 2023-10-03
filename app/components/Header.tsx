@@ -20,7 +20,7 @@ export const Header = () => {
     return;
   }
   return (
-    <div className="p-2 md:p-5 flex justify-between items-center w-full mb-10 relative">
+    <header className="p-2 md:p-5 flex justify-between items-center w-full mb-10 relative">
       <div>
         <Link href={"/"}>
           <Image src={"/logo.png"} alt="logo" height={100} width={100} />
@@ -61,7 +61,7 @@ export const Header = () => {
           </div>
         )}
       </div>
-      <div className="visible inline md:hidden">
+      <div className="visible md:hidden">
         <CiMenuFries
           className="text-primary text-2xl"
           onClick={() => dispatch(openModal())}
@@ -69,6 +69,6 @@ export const Header = () => {
       </div>
       {isOpened && <Sidebar />}
       {user && <Dropdown showDropdown={showDropdown} />}
-    </div>
+    </header>
   );
 };
