@@ -6,11 +6,9 @@ import { styles } from "../styles";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import CustomInputField from "./CustomInputField";
-import PhoneNumberField from "./PhoneNumberField";
 import { useRouter } from "next/navigation";
 import SubmitButton from "./SubmitButton";
 import { useEffect, useState } from "react";
-import { CiWarning } from "react-icons/ci";
 import FormError from "./FormMessage";
 
 type responseMsgType = {
@@ -120,14 +118,6 @@ const SignupForm = () => {
               type="email"
             />
 
-            {/* <PhoneNumberField
-              label="Phone number"
-              defaultCountry="NG"
-              name="phoneNumber"
-              placeholder="Phone number"
-              styleValue={styles.input}
-            /> */}
-
             <div className="flex flex-col lg:flex-row gap-4 md:gap-3 w-full mt-2">
               <CustomInputField
                 name="password"
@@ -147,11 +137,6 @@ const SignupForm = () => {
           </div>
         </Form>
       </Formik>
-      {/* <SocialLoginButton
-        text={"Continue with Google"}
-        provider={"google"}
-        socialIcon={googleIcon}
-      /> */}
       <div className="flex justify-center items-center gap-1">
         <p>Have an account? </p>
         <Link href="/auth/login" className="underline">

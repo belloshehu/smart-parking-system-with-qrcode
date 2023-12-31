@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const nodeExternals = require("webpack-node-externals");
+
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -13,6 +15,22 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.externals.push({
+      "utf-8-validate": "commonjs utf-8-validate",
+      bufferutil: "commonjs bufferutil",
+    });
+    return config;
+  },
 };
 
-module.exports = nextConfig;
+module.exports = {
+  ...nextConfig,
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     config.externals = [nodeExternals()];
+  //   }
+
+  //   return config;
+  // },
+};

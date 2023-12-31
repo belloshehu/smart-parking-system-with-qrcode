@@ -23,3 +23,14 @@ export const formatedTodayDate = () => {
   formatedDate = year + "-" + month + "-" + day;
   return formatedDate;
 };
+
+type Space = {
+  _id: string;
+  id: string;
+  price: number;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};

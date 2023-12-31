@@ -1,6 +1,5 @@
 import React from "react";
 import { FaCar } from "react-icons/fa";
-import { number } from "yup";
 
 type Props = {
   id: string | number;

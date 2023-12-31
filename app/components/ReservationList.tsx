@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+"use client";
+import React, { useState } from "react";
 import axios from "axios";
 import { BiSad } from "react-icons/bi";
 import Reservation from "./Reservation";

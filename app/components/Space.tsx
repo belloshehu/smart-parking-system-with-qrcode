@@ -8,7 +8,6 @@ import {
   setSelectedSpace,
   setReservation,
   removeSpace,
-  clearSelectedSpace,
 } from "../GlobalRedux/features/space/spaceSlice";
 import { calculateCost, calculateDuration } from "@/utils";
 import ReservationForm from "./ReservationForm";

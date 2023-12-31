@@ -139,4 +139,5 @@ export const {
   addSpace,
   updateSpace,
 } = spaceSlice.actions;
+
 export default spaceSlice.reducer;

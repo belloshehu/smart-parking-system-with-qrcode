@@ -32,7 +32,6 @@ const Dashboard = () => {
   useEffect(() => {
     const getReservations = async () => {
       setLoading(true);
-      console.log(user);
       try {
         const { data } = await axios.get(`/api/reservation`);
         const reservationData = await data.reservations;

@@ -1,12 +1,11 @@
 "use client";
 import React, { useEffect } from "react";
 import Reservation from "../components/Reservation";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { PaystackButton } from "react-paystack";
 import { FaMoneyBill } from "react-icons/fa";
 import Link from "next/link";
-import axios from "axios";
+import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
 const Payment = () => {
   const router = useRouter();
@@ -27,34 +26,49 @@ const Payment = () => {
     }
   }, [selectedSpace, reservation]);
 
-  const paystackProps = {
-    text: "Pay Now",
-    publicKey: process.env.PAYSTACK_PUBLIC_KEY!,
-    email: user?.email,
-    name: user?.firstName,
-    firstname: user?.firstName,
-    lastname: user?.lastName,
-    amount: reservation.cost * 100,
-    onSuccess: async (transition: any) => {
-      try {
-        const { data } = await axios.post("/api/reservation", {
-          amount: parseInt(reservation.cost),
-          vehicleNumber: reservation.vehicleNumber,
-          spaceId: selectedSpace._id,
-          userId: user.id,
-          checkInDate: reservation.checkInDate,
-          checkInTime: reservation.checkInTime,
-          duration: reservation.duration,
-          paymentReference: transition.reference,
-        });
-        router.push("/dashboard");
-      } catch (error: any) {
-        console.log(error);
-      }
+  // with flutterwave
+  const config = {
+    public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
+    tx_ref: Date.now().toString(),
+    amount: reservation?.cost * 100,
+    currency: "NGN",
+    payment_options: "card,mobilemoney,ussd",
+    customer: {
+      email: user?.email,
+      phone_number: "+2348133306065",
+      name: user?.firstName + " " + user?.lastName,
     },
-    onCancel: async () => {
-      router.push("/");
+    customizations: {
+      title: "Smart Parking",
+      description: "Payment for space reservation",
+      logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
     },
+  };
+
+  const fwConfig = {
+    ...config,
+    text: "Pay with Flutterwave!",
+    callback: async (response: any) => {
+      // console.log(response);
+      console.log("Payment success!");
+      closePaymentModal(); // this will close the modal programmatically
+    },
+    onClose: () => {
+      console.log("Payment cancelled!");
+    },
+  };
+  const handleFlutterPayment = useFlutterwave(fwConfig);
+
+  const handlePayment = () => {
+    handleFlutterPayment({
+      callback: (response: any) => {
+        console.log("Payment completed!");
+        console.log(response);
+      },
+      onClose: () => {
+        console.log("Cancelled payment!");
+      },
+    });
   };
   return (
     <div className="w-full min-h-screen flex flex-col gap-5 justify-start items-center">
@@ -70,11 +84,7 @@ const Payment = () => {
             className="bg-red-600 p-2 px-3 rounded-md text-center text-white flex-2">
             Cancel
           </Link>
-          <PaystackButton
-            className="bg-slate-100 p-2 px-3 rounded-md text-center text-primary flex-1"
-            {...paystackProps}
-            currency="NGN"
-          />
+          <button onClick={handlePayment}>Pay now</button>
         </div>
       </div>
     </div>

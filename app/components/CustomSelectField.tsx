@@ -1,4 +1,4 @@
-import { Field, useField } from "formik";
+import { useField } from "formik";
 import { styles } from "../styles";
 
 type InputProps = {
@@ -6,6 +6,7 @@ type InputProps = {
   name: string;
   label: string;
 };
+
 const CustomSelectField = ({ label, name, children, ...props }: InputProps) => {
   const [field, meta] = useField(name);
   return (

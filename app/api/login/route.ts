@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
   await connectDB();
   //request body
   const { email, password } = await request.json();
-  console.log(email, password);
   if (!email)
     return NextResponse.json(
       { message: "email is required", success: false },

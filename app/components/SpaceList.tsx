@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from "react";
+"use client";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Space } from "./Space";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import { BiSad } from "react-icons/bi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import mqtt, { IClientOptions } from "mqtt";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateSpace,
+  setSpaces,
+} from "../GlobalRedux/features/space/spaceSlice";
+import axios from "axios";
 
 type SpaceType = {
   _id: string;
@@ -17,14 +24,97 @@ type SpaceType = {
   __v: number;
 };
 
-const SpaceList = async ({
-  spaces,
-  loading,
-}: {
-  spaces: SpaceType[];
-  loading: boolean;
-}) => {
+const SpaceList = () => {
   const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
+  const { spaces } = useSelector((store: any) => store.space);
+  const dispatch = useDispatch();
+  const [client, setClient] = useState<any>(null);
+  const host = "ws://broker.emqx.io:8083/mqtt";
+  const clientId = `mqttjs_1+ ${Math.random().toString(16).substr(2, 8)}`;
+  // const clientId = "mqttx_06d17e47";
+  const options = {
+    keepalive: 60,
+    clientId: clientId,
+    protocolId: "MQTT",
+    protocolVersion: 4,
+    clean: true,
+    reconnectPeriod: 1000,
+    connectTimeout: 30 * 1000,
+    will: {
+      topic: "WillMsg",
+      payload: "Connection Closed abnormally..!",
+      qos: 0,
+      retain: false,
+    },
+  };
+
+  const connectClient = useCallback(() => {
+    const clt = mqtt.connect(host, options as any);
+    setClient(clt);
+  }, [client]);
+
+  const updateSpaceStatus = async (spaceId: string, spaceStatus: string) => {
+    const spaceToUpdate = spaces.filter(
+      (space: SpaceType) => space.id === spaceId
+    )[0];
+    console.log(spaceToUpdate, spaces.length, spaceStatus);
+    // update status of the target space
+    if (spaceToUpdate) {
+      console.log("new space: ", { ...spaceToUpdate, status: spaceStatus });
+      // update space document in database
+      try {
+        const { data } = await axios.patch(`/api/space/${spaceToUpdate._id}`, {
+          ...spaceToUpdate,
+          status: spaceStatus,
+        });
+        dispatch(updateSpace(data.space));
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const getSpaces = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/api/space");
+        const spaceData = await data.spaces;
+        dispatch(setSpaces(spaceData));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getSpaces();
+    connectClient();
+  }, []);
+
+  useEffect(() => {
+    if (client) {
+      client?.on("connect", function () {
+        console.log("connected");
+        client?.subscribe("/car/parking/system/space");
+      });
+      client?.on("message", function (topic: string, message: string) {
+        let [spaceId, spaceStatus] = message.toString().split("=");
+        spaceId = spaceId.trim();
+        spaceStatus = spaceStatus.trim();
+        spaceStatus = spaceStatus === "1" ? "occupied" : "free";
+        // update status of the target space
+        updateSpaceStatus(spaceId, spaceStatus);
+      });
+      client.on("reconnect", function () {
+        console.log("Reconnecting");
+      });
+      client.on("error", function () {
+        console.log("Connection error");
+      });
+    }
+  }, [client]);
 
   if (loading) {
     return (
@@ -51,11 +141,11 @@ const SpaceList = async ({
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-20 w-full gap-8 my-5">
-      {spaces?.map((space) => (
+      {spaces?.map((space: SpaceType) => (
         <Space key={space._id} space={space} />
       ))}
     </div>
   );
 };
 
-export default SpaceList;
+export default memo(SpaceList);

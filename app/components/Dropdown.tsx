@@ -1,9 +1,7 @@
+"use client";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
-import { clearUser } from "../GlobalRedux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { FaUser } from "react-icons/fa";
 import { logout } from "@/utils/auth";
 import LinkItem from "./LinkItem";

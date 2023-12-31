@@ -5,6 +5,7 @@ import modalReducer from "./features/modal/modalSlice";
 import formReducer from "./features/form/formSlice";
 import authReducer from "./features/auth/authSlice";
 import spaceReducer from "./features/space/spaceSlice";
+import iotReducer from "./features/iot/iotSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     form: formReducer,
     auth: authReducer,
     space: spaceReducer,
+    iot: iotReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

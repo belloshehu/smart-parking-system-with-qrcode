@@ -1,15 +1,8 @@
+"use client";
 import React, { useState } from "react";
-import {
-  FaBarcode,
-  FaCalendar,
-  FaCar,
-  FaClock,
-  FaQrcode,
-} from "react-icons/fa";
-import Link from "next/link";
+import { FaCalendar, FaCar, FaClock, FaQrcode } from "react-icons/fa";
 import { CategoryType } from "./CategoryType";
 import QRCode from "./QRCode";
-import axios from "axios";
 
 type props = {
   _id: string;

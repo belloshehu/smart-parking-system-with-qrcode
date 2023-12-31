@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { SelectedSpace } from "./SelectedSpace";
 import { useSelector } from "react-redux";
