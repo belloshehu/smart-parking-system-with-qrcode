@@ -4,6 +4,7 @@ const nodeExternals = require("webpack-node-externals");
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
+    reactStrictMode: true,
   },
   images: {
     remotePatterns: [

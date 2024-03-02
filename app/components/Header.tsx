@@ -21,7 +21,7 @@ export const Header = () => {
   }
   return (
     <header className="p-2 md:p-5 flex justify-between items-center w-full mb-10 relative">
-      {/* <div>
+      <div>
         <Link href={"/"}>
           <Image src={"/logo.png"} alt="logo" height={100} width={100} />
         </Link>
@@ -33,7 +33,7 @@ export const Header = () => {
         <li>
           <Link href={"/about"}>About Us</Link>
         </li>
-      </ul> */}
+      </ul>
 
       <div className="hidden md:visible md:flex items-center gap-4">
         {!user ? (

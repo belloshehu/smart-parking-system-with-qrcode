@@ -3,18 +3,14 @@ import React from "react";
 import { useQRCode } from "next-qrcode";
 
 type Props = {
-  id: string;
-  checkInTime: Date;
-  checkInDate: Date;
+  reservationId: string;
 };
 
-function QRCode({ id, checkInDate, checkInTime }: Props) {
+function QRCode({ reservationId }: Props) {
   const { Canvas } = useQRCode();
   return (
     <Canvas
-      text={
-        id + "," + checkInDate.toDateString() + "," + checkInTime.toTimeString()
-      }
+      text={reservationId}
       options={{
         errorCorrectionLevel: "M",
         margin: 3,

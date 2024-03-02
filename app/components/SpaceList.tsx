@@ -5,13 +5,14 @@ import { FaSpinner } from "react-icons/fa";
 import { BiSad } from "react-icons/bi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import mqtt, { IClientOptions } from "mqtt";
+import mqtt, { IClientOptions, MqttClient } from "mqtt";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateSpace,
   setSpaces,
 } from "../GlobalRedux/features/space/spaceSlice";
 import axios from "axios";
+import { setMqttClient } from "../GlobalRedux/features/iot/iotSlice";
 
 type SpaceType = {
   _id: string;
@@ -28,12 +29,13 @@ const SpaceList = () => {
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const { spaces } = useSelector((store: any) => store.space);
+  const { mqttClient } = useSelector((store: any) => store.iot);
   const dispatch = useDispatch();
-  const [client, setClient] = useState<any>(null);
-  const host = "ws://broker.emqx.io:8083/mqtt";
+  // const [client, setClient] = useState<any>(null);
+  const host = "wss://broker.emqx.io:8084/mqtt";
   const clientId = `mqttjs_1+ ${Math.random().toString(16).substr(2, 8)}`;
   // const clientId = "mqttx_06d17e47";
-  const options = {
+  const options: IClientOptions = {
     keepalive: 60,
     clientId: clientId,
     protocolId: "MQTT",
@@ -49,32 +51,12 @@ const SpaceList = () => {
     },
   };
 
-  const connectClient = useCallback(() => {
-    const clt = mqtt.connect(host, options as any);
-    setClient(clt);
-  }, [client]);
+  const client: MqttClient = mqtt.connect(host, options);
 
-  const updateSpaceStatus = async (spaceId: string, spaceStatus: string) => {
-    const spaceToUpdate = spaces.filter(
-      (space: SpaceType) => space.id === spaceId
-    )[0];
-    console.log(spaceToUpdate, spaces.length, spaceStatus);
-    // update status of the target space
-    if (spaceToUpdate) {
-      console.log("new space: ", { ...spaceToUpdate, status: spaceStatus });
-      // update space document in database
-      try {
-        const { data } = await axios.patch(`/api/space/${spaceToUpdate._id}`, {
-          ...spaceToUpdate,
-          status: spaceStatus,
-        });
-        dispatch(updateSpace(data.space));
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
+  const connectClient = useCallback(() => {
+    const client: MqttClient = mqtt.connect(host, options as any);
+    dispatch(setMqttClient(client));
+  }, []);
 
   useEffect(() => {
     const getSpaces = async () => {
@@ -90,31 +72,62 @@ const SpaceList = () => {
       }
     };
     getSpaces();
-    connectClient();
   }, []);
 
   useEffect(() => {
-    if (client) {
-      client?.on("connect", function () {
-        console.log("connected");
-        client?.subscribe("/car/parking/system/space");
-      });
-      client?.on("message", function (topic: string, message: string) {
-        let [spaceId, spaceStatus] = message.toString().split("=");
-        spaceId = spaceId.trim();
-        spaceStatus = spaceStatus.trim();
-        spaceStatus = spaceStatus === "1" ? "occupied" : "free";
-        // update status of the target space
-        updateSpaceStatus(spaceId, spaceStatus);
-      });
-      client.on("reconnect", function () {
-        console.log("Reconnecting");
-      });
-      client.on("error", function () {
-        console.log("Connection error");
-      });
+    connectClient();
+  }, []);
+
+  client?.on("connect", function () {
+    console.log("connected");
+    client?.subscribe("/car/parking/system/space");
+  });
+
+  client?.on("message", function (topic: string, message: string) {
+    console.log(message.toString().split(","));
+    const receivedMessage = message.toString().split(",");
+    receivedMessage.forEach((space: string) => {
+      let [spaceId, spaceStatus] = space.trim().split("=");
+      spaceId = spaceId.trim();
+      spaceStatus = spaceStatus === "1" ? "occupied" : "free";
+      // update status of the target space
+      updateSpaceStatus(spaceId, spaceStatus);
+    });
+  });
+
+  client.on("reconnect", function () {
+    console.log("Reconnecting");
+  });
+  client.on("error", function () {
+    console.log("Connection error");
+  });
+
+  const updateSpaceStatus = async (spaceId: string, spaceStatus: string) => {
+    if (spaces.length > 0) {
+      const spaceToUpdate = spaces.filter(
+        (space: SpaceType) => space.id === spaceId
+      )[0];
+      console.log(spaceToUpdate, spaces.length, spaceStatus);
+      // update status of the target space
+      if (spaceToUpdate) {
+        console.log("new space: ", { ...spaceToUpdate, status: spaceStatus });
+        // update space document in database
+        try {
+          const { data } = await axios.patch(
+            `/api/space/mqtt/${spaceToUpdate._id}`,
+            {
+              ...spaceToUpdate,
+              status: spaceStatus,
+            }
+          );
+          dispatch(updateSpace(data.space));
+          console.log(data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
-  }, [client]);
+  };
 
   if (loading) {
     return (

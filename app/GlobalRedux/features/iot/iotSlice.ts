@@ -1,10 +1,11 @@
 "use client";
 import { createSlice } from "@reduxjs/toolkit";
+import { MqttClient } from "mqtt";
 
 const iotSlice = createSlice({
   name: "iot",
   initialState: {
-    mqttClient: null,
+    mqttClient: MqttClient,
   },
   reducers: {
     setMqttClient: (state, { payload }) => {

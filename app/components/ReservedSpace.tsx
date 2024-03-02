@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaCalendar, FaCar, FaClock, FaQrcode } from "react-icons/fa";
 import { CategoryType } from "./CategoryType";
 import QRCode from "./QRCode";
+import { useSelector } from "react-redux";
 
 type props = {
   _id: string;
@@ -34,6 +35,7 @@ const ReservedSpace = ({
   status,
   cancelReservation,
 }: props) => {
+  const { mqttClient } = useSelector((store: any) => store.iot);
   const setBgColor = () => {
     switch (status) {
       case "cancelled":
@@ -43,6 +45,16 @@ const ReservedSpace = ({
       case "expired":
         return "bg-red-800";
     }
+  };
+
+  const handleCancelReservation = async (id: string) => {
+    try {
+      await cancelReservation(id);
+      await mqttClient.publish(
+        "/car/parking/system/reservation",
+        `${space.id}=0`
+      );
+    } catch (error) {}
   };
   return (
     <div
@@ -74,7 +86,7 @@ const ReservedSpace = ({
           </div>
         </div>
         <div className="w-full md:mx-auto">
-          <QRCode id={""} checkInDate={new Date()} checkInTime={new Date()} />
+          <QRCode reservationId={_id} />
         </div>
       </div>
 
@@ -86,7 +98,7 @@ const ReservedSpace = ({
       <div className="mx-5 w-full">
         {status === "cancelled" ? null : (
           <button
-            onClick={() => cancelReservation(_id)}
+            onClick={async () => handleCancelReservation(_id)}
             className="p-2 px-5 rounded-full bg-slate-300 text-primary w-auto text-center mt-4 ">
             Cancel
           </button>

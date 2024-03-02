@@ -1,18 +1,21 @@
 "use client";
 import React, { useEffect } from "react";
 import Reservation from "../components/Reservation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { FaMoneyBill } from "react-icons/fa";
 import Link from "next/link";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
+import axios from "axios";
 
 const Payment = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const { selectedSpace, reservation } = useSelector(
     (store: any) => store.space
   );
   const { user } = useSelector((store: any) => store.auth);
+  const { mqttClient } = useSelector((store: any) => store.iot);
 
   useEffect(() => {
     if (!user) {
@@ -30,7 +33,7 @@ const Payment = () => {
   const config = {
     public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY!,
     tx_ref: Date.now().toString(),
-    amount: reservation?.cost * 100,
+    amount: reservation?.cost,
     currency: "NGN",
     payment_options: "card,mobilemoney,ussd",
     customer: {
@@ -49,24 +52,42 @@ const Payment = () => {
     ...config,
     text: "Pay with Flutterwave!",
     callback: async (response: any) => {
-      // console.log(response);
       console.log("Payment success!");
       closePaymentModal(); // this will close the modal programmatically
     },
     onClose: () => {
       console.log("Payment cancelled!");
+      router.push("/");
     },
   };
   const handleFlutterPayment = useFlutterwave(fwConfig);
 
   const handlePayment = () => {
     handleFlutterPayment({
-      callback: (response: any) => {
-        console.log("Payment completed!");
-        console.log(response);
+      callback: async (response: any) => {
+        try {
+          const res = await axios.post("/api/reservation", {
+            ...reservation,
+            paymentReference: response.tx_ref,
+            amount: response.charged_amount,
+          });
+
+          mqttClient.publish(
+            "/car/parking/system/reservation",
+            `${res.data.space.id}=1`
+          );
+          console.log(res.data);
+          router.push("/dashboard");
+        } catch (error) {
+          console.log("Reservation failed:", error);
+          router.push("/");
+        } finally {
+          closePaymentModal();
+        }
       },
       onClose: () => {
-        console.log("Cancelled payment!");
+        // console.log("Cancelled payment!");
+        router.push("/");
       },
     });
   };

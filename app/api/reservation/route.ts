@@ -28,17 +28,18 @@ export async function POST(request: NextRequest) {
         { status: StatusCodes.UNAUTHORIZED }
       );
     }
+    const userId = id;
     const {
       duration,
       checkInDate,
       checkInTime,
       amount,
-      spaceId,
-      userId,
+      space,
       vehicleNumber,
       paymentReference,
     } = await request.json();
 
+    const spaceId = space;
     if (!duration) {
       return NextResponse.json(
         { message: "Reservation duration required" },
@@ -111,13 +112,13 @@ export async function POST(request: NextRequest) {
       paymentReference,
     });
 
-    existingReservation.status = "occupied";
+    existingReservation.status = "reserved";
     await existingReservation.save();
 
     return NextResponse.json(
       {
         message: "Reservation created successfully",
-        reservation,
+        reservation: { ...reservation, space: existingReservation },
       },
       { status: StatusCodes.CREATED }
     );
@@ -134,7 +135,10 @@ export async function GET(request: NextRequest) {
   try {
     const token: any = request.cookies.get("token")?.value;
     if (!token) {
-      NextResponse.redirect("/auth/login");
+      return NextResponse.json(
+        { message: "Please login" },
+        { status: StatusCodes.UNAUTHORIZED }
+      );
     }
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
     if (!decoded) {
