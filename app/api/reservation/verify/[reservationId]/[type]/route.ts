@@ -41,18 +41,23 @@ export async function GET(
     const timeDiff = Math.round((now - formatedCheckInDate) / (1000 * 60));
     let message = "";
     let amount = 0;
+    let access = false;
 
     if (type === "checkin" && expired) {
       message = "Reservation expired";
+      access = false;
     } else if (type === "checkin") {
       message = `Welcome ${Math.abs(timeDiff)} mins.`;
+      access = true;
     } else if (type === "checkout" && now - formatedCheckOutDate > 10000 * 60) {
       message = `${timeDiff} min Overtime`;
       amount = timeDiff * space.price;
+      access = false;
     } else {
       message = `${Math.round(
         Math.abs((now - formatedCheckOutDate) / 60000)
       )} mins. Bye`;
+      access = true;
     }
     return NextResponse.json(
       {
@@ -60,6 +65,7 @@ export async function GET(
         type,
         expired,
         amount,
+        access,
       },
       { status: StatusCodes.OK }
     );
