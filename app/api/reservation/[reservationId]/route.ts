@@ -151,7 +151,7 @@ export async function PATCH(request: NextRequest, { params }: { params: any }) {
         .toISOString()
         .slice(0, 10);
       const emailContent = `
-      <h4>Hi ${user.firstName}</h4>
+      <p>Hi ${user.firstName},</p>
       <p>Reservation was successfully cancelled: </p>
       <h4 style="text-align:left">Reservation details:</h4>
       <table style="padding: 1rem; text-align: left; background-color: #2233D3; color: white; width: 100%">

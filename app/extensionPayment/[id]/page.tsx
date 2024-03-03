@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import Reservation from "../components/Reservation";
+import Reservation from "../../components/Reservation";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { FaMoneyBill } from "react-icons/fa";
@@ -8,14 +8,13 @@ import Link from "next/link";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 import axios from "axios";
 
-const Payment = () => {
-  const dispatch = useDispatch();
+const Payment = ({ params }: { params: any }) => {
+  const { id } = params;
   const router = useRouter();
   const { selectedSpace, reservation } = useSelector(
     (store: any) => store.space
   );
   const { user } = useSelector((store: any) => store.auth);
-  const { mqttClient } = useSelector((store: any) => store.iot);
 
   useEffect(() => {
     if (!user) {
@@ -66,19 +65,12 @@ const Payment = () => {
     handleFlutterPayment({
       callback: async (response: any) => {
         try {
-          const res = await axios.post("/api/reservation", {
-            ...reservation,
-            paymentReference: response.tx_ref,
-            amount: response.charged_amount,
+          const res = await axios.patch(`/api/reservation/extension/${id}`, {
+            duration: reservation.duration,
           });
-
-          mqttClient.publish(
-            "/car/parking/system/reservation",
-            `${res.data.reservation.space.id}=1`
-          );
           router.push("/dashboard");
         } catch (error) {
-          console.log("Reservation failed:", error);
+          console.log("Reservation extension failed:", error);
           router.push("/");
         } finally {
           closePaymentModal();
@@ -93,7 +85,7 @@ const Payment = () => {
   return (
     <div className="w-full min-h-screen flex flex-col gap-5 justify-start items-center">
       <h3 className="my-3 text-xl text-primary text-center font-semibold border-b-4 border-primary">
-        Reservation Payment
+        Reservation Extension Payment
       </h3>
       <div className="shadow-lg shadow-black w-full md:w-2/5 flex flex-col justify-center gap-0 items-center p-0 rounded-lg relative bg-primary">
         <FaMoneyBill className="absolute top-0 right-0 rotate-45 text-7xl text-red-500" />

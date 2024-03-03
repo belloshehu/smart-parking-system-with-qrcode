@@ -28,6 +28,14 @@ const Reservation = () => {
           <p>Checkin Time</p>
           <p>{reservation.checkInTime}</p>
         </div>
+        <div className="flex justify-center items-center gap-2">
+          <FaClock />
+          <p>Duration</p>
+          <p>
+            {reservation.durationMinutes + reservation.durationHour * 60}{" "}
+            minutes
+          </p>
+        </div>
       </div>
     </div>
   );
