@@ -7,7 +7,7 @@ import { FaMoneyBill } from "react-icons/fa";
 import Link from "next/link";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 import axios from "axios";
-
+import toast from "react-hot-toast";
 const Payment = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -76,9 +76,11 @@ const Payment = () => {
             "/car/parking/system/reservation",
             `${res.data.reservation.space.id}=1`
           );
+          toast.success("Reservation success");
           router.push("/dashboard");
         } catch (error) {
           console.log("Reservation failed:", error);
+          toast.error("Reservation failed");
           router.push("/");
         } finally {
           closePaymentModal();

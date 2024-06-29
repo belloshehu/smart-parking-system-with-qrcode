@@ -77,7 +77,7 @@ const ReservationList = async ({
     }
   };
 
-  if (reservations?.length === 0 || !reservations) {
+  if (reservationItems?.length === 0 || !reservations) {
     return (
       <div className="flex flex-col gap-3 justify-center items-center bg-slate-100 p-5">
         <p>Oops! there are no reservations yet</p>
