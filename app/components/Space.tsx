@@ -8,7 +8,6 @@ import {
   setSelectedSpace,
   setReservation,
   removeSpace,
-  clearSelectedSpace,
 } from "../GlobalRedux/features/space/spaceSlice";
 import { calculateCost, calculateDuration } from "@/utils";
 import ReservationForm from "./ReservationForm";
@@ -123,6 +122,7 @@ export const Space = ({ space }: { space: Props }) => {
           minutes
         ).toFixed(2),
         duration: calculateDuration(hours, minutes),
+        space: _id,
       })
     );
     setLoading(false);
@@ -162,13 +162,13 @@ export const Space = ({ space }: { space: Props }) => {
         </div>
         {!pathname.includes("/admin") ? (
           <button
-            disabled={status === "occupied"}
+            disabled={status !== "free"}
             className={`${
-              status === "occupied" ? "bg-slate-400" : "bg-primary"
-            } text-white rounded-full text-center p-2 px-5 my-3 shadow-md shadow-slate-600 w-full md:w-fit`}
+              status !== "free" ? "bg-slate-400" : "bg-primary"
+            } text-white rounded-full text-center p-2 px-5 my-3 shadow-md shadow-slate-600 w-full md:w-fit capitalize`}
             type="button"
             onClick={handleClick}>
-            {status === "free" ? "Reserve now" : "Occupied"}
+            {status === "free" ? "Reserve now" : status}
           </button>
         ) : (
           <div className="flex justify-between items-center w-full mt-5">

@@ -67,8 +67,10 @@ export const Header = () => {
           onClick={() => dispatch(openModal())}
         />
       </div>
-      {isOpened && <Sidebar />}
-      {user && <Dropdown showDropdown={showDropdown} />}
+      <>
+        {isOpened && <Sidebar />}
+        {user && <Dropdown showDropdown={showDropdown} />}
+      </>
     </header>
   );
 };

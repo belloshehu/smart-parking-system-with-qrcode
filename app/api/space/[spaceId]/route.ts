@@ -5,6 +5,7 @@ import connectDB from "../../database/dbconnect";
 import { checkAuthorization } from "@/utils/authorization";
 import jwt from "jsonwebtoken";
 import User from "../../models/user";
+import Reservation from "../../models/reservation";
 
 export async function GET(request: NextRequest, { params }: { params: any }) {
   try {
@@ -102,6 +103,15 @@ export async function PATCH(request: NextRequest, { params }: { params: any }) {
           message: `Space with a id ${spaceId} not found`,
         },
         { status: StatusCodes.NOT_FOUND }
+      );
+    }
+
+    const existingReservation = await Reservation.find({ space: spaceId });
+    console.log(existingReservation, spaceId);
+    if (space.status === "reserved" && existingReservation.length > 0) {
+      return NextResponse.json(
+        { message: "Space is reserved" },
+        { status: StatusCodes.BAD_REQUEST }
       );
     }
     space.id = id;

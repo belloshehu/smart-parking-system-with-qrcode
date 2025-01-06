@@ -107,7 +107,7 @@ const AdminSpaces = () => {
           </button>
         </div>
         <div className="min-w-full flex flex-col gap-5 justify-center items-center">
-          <SpaceList spaces={spaces} loading={loading} />
+          <SpaceList />
         </div>
       </div>
 

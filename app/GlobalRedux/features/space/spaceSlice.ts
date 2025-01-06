@@ -22,6 +22,7 @@ type Reservation = {
   space: Space | null;
   status: string;
   vehicleNumber: string;
+  paymentReference?: string;
 };
 type stateTypes = {
   selectedSpace: Space | null;
@@ -139,4 +140,5 @@ export const {
   addSpace,
   updateSpace,
 } = spaceSlice.actions;
+
 export default spaceSlice.reducer;

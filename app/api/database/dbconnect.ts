@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const MONGODB_URI =
   process.env.NODE_ENV === "development"
     ? "mongodb://127.0.0.1:27017/smart-parking"
-    : process.env.MONGODB_URI;
+    : process.env.MONGODB_URI!;
 
 if (!MONGODB_URI) {
   throw new Error(

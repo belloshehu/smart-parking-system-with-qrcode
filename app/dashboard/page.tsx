@@ -6,24 +6,8 @@ import ReservationList from "../components/ReservationList";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { Reservation } from "@/typings/types";
 
-type Reservation = {
-  _id: string;
-  user: string;
-  space: {
-    type: string;
-    status: string;
-    price: number;
-    id: string;
-  };
-  amount: number;
-  createdAt: string;
-  duration: number;
-  checkInDate: string;
-  checkInTime: string;
-  vehicleNumber: string;
-  status: "valid" | "cancelled" | "expired";
-};
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -32,7 +16,6 @@ const Dashboard = () => {
   useEffect(() => {
     const getReservations = async () => {
       setLoading(true);
-      console.log(user);
       try {
         const { data } = await axios.get(`/api/reservation`);
         const reservationData = await data.reservations;

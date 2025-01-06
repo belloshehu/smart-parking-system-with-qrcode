@@ -26,7 +26,7 @@ const SpaceSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ["free", "occupied"],
+        values: ["free", "occupied", "reserved"],
         message: "{VALUE} is not a valid space status",
         default: "free",
       },
