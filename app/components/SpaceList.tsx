@@ -139,7 +139,7 @@ const SpaceList = () => {
 	}
 	if (spaces?.length === 0 || !spaces) {
 		return (
-			<div className="flex flex-col gap-3 justify-center items-center bg-slate-100 p-5">
+			<div className="flex flex-col gap-3 justify-start items-center bg-slate-100 p-5">
 				<p>Oops! there are no spaces yet</p>
 				<BiSad className="text-primary text-3xl md:text-5xl" />
 				{/* Only show button on other pages beside admin pages */}
@@ -155,7 +155,7 @@ const SpaceList = () => {
 		);
 	}
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 px-0 md:px-20 w-full gap-8 my-5">
+		<div className="grid grid-cols-1 md:grid-cols-2 px-0 w-full gap-8 my-5">
 			{spaces?.map((space: SpaceType) => (
 				<Space key={space._id} space={space} />
 			))}
